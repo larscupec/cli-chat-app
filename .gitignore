@@ -1,5 +1,6 @@
 build/
 lib/
+.cache/
 
 # Prerequisites
 *.d
@@ -47,3 +48,9 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 CMakeUserPresets.json
+
+# Project specific files
+clientInfo.json
+conversation.json
+settings.json
+configure
