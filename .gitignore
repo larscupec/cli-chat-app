@@ -50,7 +50,8 @@ _deps
 CMakeUserPresets.json
 
 # Project specific files
-clientInfo.json
-conversation.json
-settings.json
+*.json
 configure
+configure.bat
+*#*#
+.#*

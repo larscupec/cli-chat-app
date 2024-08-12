@@ -2,25 +2,14 @@
 
 #include <string>
 
-typedef struct _win_st WINDOW;
-
-class Console {
-private:
-  Console();
-
-  static Console *instance;
-  WINDOW *scanWindow = nullptr;
-
+class Console
+{
 public:
-  Console(const Console& obj) = delete;
-  ~Console();
+  Console() {}
+  ~Console() {}
 
-  static Console* getInstance();
-  void setScanWindow(WINDOW *scanWindow) { this->scanWindow = scanWindow; }
+  static void WriteLine(std::string message);
   
-  void moveToOutput();
-  void clearOutput();
-  void chatDebug(std::string);
-  void displayPadPosition(int, int);
-  void displayCaretPosition(unsigned short, unsigned short);
-};
+private:
+  
+};    

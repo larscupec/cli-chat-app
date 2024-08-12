@@ -1,106 +1,28 @@
-#include <iostream>
-#include <ncurses.h>
-#include <vector>
+#include "App.hpp"
+#include "Debug.hpp"
+#include "Server.hpp"
+#include "enet/enet.h"
+#include <cstdlib>
+#include <stdexcept>
 #include <thread>
 
-#include "Client.hpp"
-#include "ChatWindow.hpp"
+int main(void) {
+  // Debug::SetWriteToConsole(true);
+  Debug::Log("Starting clichatapp...");
 
-Client client;
+  if (enet_initialize() != 0) {
+    Debug::Log("An error occurred while initializing ENet");
+    throw std::runtime_error("An error occurred while initializing ENet");
+  }
+  atexit(enet_deinitialize);
 
-bool programRunning = true;
+  Server server(1234);
+  std::thread serverThread(&Server::Start, &server);
+  
+  App app;
+  app.Run();
 
-void processAppCommand(std::string command, std::vector<std::string> args)
-{
-    if (command == "exit") {
-        // Exit application
-        programRunning = false;
-    }
-    else if (command == "connect") {
-        if (args.size() < 1) printw("Invalid server address\n");
-        else {
-            std::vector<std::string> ipport;
-            boost::split(ipport, args[0], boost::is_any_of(":"));
-            client.connect(ipport[0], std::stoi(ipport[1]));
-        }
-    }
-    else {
-        printw("Unknow command\n");
-    }
-}
-
-int main()
-{
-    ChatWindow cWin;
-
-    client.cWin = &cWin;
-    cWin.client = &client;
-
-    if (client.init() != 0) return 1;
-
-    // Load the client info
-    client.loadClientInfo();
-
-    // Init ncurses window and show greeting message
-    initscr();
-    clear();
-    keypad(stdscr, TRUE);
-    printw("Program started... Hello %s!\n", client.username.c_str());
-
-    if (client.autoconnectIp != "") {
-        std::vector<std::string> vec;
-        vec.push_back(client.autoconnectIp);
-        processAppCommand("connect", vec);
-    }
-
-    // Start the main program loop
-    while (programRunning)
-    {
-        char command[50];
-
-        if (client.connected) {
-            cWin.init();
-
-            // Start the message loop (for receiving messages)
-            std::thread t1(&Client::update, &client);
-
-            // Enter chat room
-            wprintw(cWin.scanWin, ">>> ");
-            
-            while (client.connected)
-            {
-                cWin.update();
-            }
-
-            // End message loop thread
-            t1.join();
-
-            cWin.destroy();
-
-            clear();
-            printw("You left the server.\n");
-        }
-        else {
-            echo();
-            getstr(command);
-
-            std::vector<std::string> args;
-            boost::split(args, command, boost::is_any_of(" "));
-            std::string cmd(command);
-            if (args.size() > 1) {
-                cmd = args[0];
-                // Remove the first command
-                args[0] = args[args.size() - 1];
-                args.pop_back();
-            }
-            
-            processAppCommand(cmd, args);
-        }
-    }
-
-    endwin();
-
-    client.destroy();
-
-    return 0;
+  serverThread.join();
+  
+  return 0;
 }

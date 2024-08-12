@@ -1,34 +1,32 @@
 #pragma once
 
 #include <string>
+#include <enet/enet.h>
 
-typedef struct _ENetHost EnetHost;
-typedef struct _ENetPeer ENetPeer;
+class Message;
+class MessageHandler;
 
-class ChatWindow;
-
-class Client {
-private:  
-  bool isConnected = false;
-  std::string autoconnectIP = "";
-  int autoconnectPort = 0;
-  EnetHost *client = nullptr;
-  ENetPeer *peer = nullptr;
-  ChatWindow *chatWindow = nullptr;
-
+class Client
+{
 public:
-  Client(ChatWindow* chatWindow);
+  Client(std::string username);
   ~Client();
 
-  void connect(std::string ip, int port);
-  void update();
-  void disconnect();
-  void send(std::string message);
+  bool ConnectTo(std::string ip, int port);
+  void Listen();
+  void Send(Message *message);
+  void Disconnect();
 
-  void loadClientInfo();
-  void tryAutoConnect();
+  std::string GetUsername() { return username; }
 
-  bool getIsConnected() { return isConnected; }
+private:
+  std::string username = "";
 
-  std::string username = "user";
-};
+  bool isConnected = false;
+  bool isListening = false;
+
+  ENetHost* client = nullptr;
+  ENetPeer* connection = nullptr;
+
+  MessageHandler *messageHandler = nullptr;
+};   

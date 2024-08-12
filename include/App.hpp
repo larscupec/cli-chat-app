@@ -1,10 +1,6 @@
 #pragma once
 
-#include <string>
-#include <vector>
-
 class Client;
-class ChatWindow;
 
 class App
 {
@@ -12,11 +8,8 @@ public:
   App();
   ~App();
 
-  void run();
-  void processCommand(std::string command, std::vector<std::string> args);
-  
+  void Run();
+
 private:
-  bool isRunning = false;
-  Client* client;
-  ChatWindow* chatWindow;
-};
+  Client *client = nullptr;
+};   

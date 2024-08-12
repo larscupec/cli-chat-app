@@ -5,10 +5,11 @@
 class User
 {
 public:
-    User() {};
-    ~User() {};
+  User(std::string username) : username(username) {}
+  ~User() {}
 
-    unsigned short id;
-    std::string username;
-    unsigned char color;
-};
+  const std::string GetUsername() { return username; }
+
+private:
+  std::string username;
+};   

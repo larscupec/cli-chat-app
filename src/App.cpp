@@ -1,47 +1,42 @@
 #include "App.hpp"
+#include <filesystem>
+#include <thread>
+#include "JsonFileWriter.hpp"
+#include "JsonFileReader.hpp"
 #include "Client.hpp"
-#include "ChatWindow.hpp"
-
-#include <ncurses.h>
-#include <string>
-#include <vector>
+#include "Debug.hpp"
 
 App::App()
 {
-  chatWindow = new ChatWindow();
-
-  chatWindow->client = client;
-
-  // Initialize the ncurses window and show greeting message
-  initscr();
-  clear();
-  keypad(stdscr, TRUE);
-
-  client = new Client(chatWindow);
-  client->loadClientInfo();
+  const std::string CLIENT_INFO_PATH = "./clientInfo.json";
+  const std::string DEFAULT_USERNAME = "Guest";
   
-  printw("Hello %s\n", client->username.c_str());
-
-  client->tryAutoConnect();
-}
-
-App::~App() {}
-
-void App::run()
-{
-  isRunning = true;
-  
-  while (isRunning)
-  {
-    char commandBuffer[50];
-
-    if (client->getIsConnected()) {
-
-      
-    }
+  // Read the 'clientInfo.json' file
+  // if it does not exist create one
+    
+  if (!std::filesystem::exists(CLIENT_INFO_PATH)) {
+    Debug::Log("'clientInfo.json' not found, creating a new one...");
+    JsonFileWriter clientInfo(CLIENT_INFO_PATH);
+    clientInfo.Write("username", DEFAULT_USERNAME);
   }
+
+  Debug::Log("Reading 'clientInfo.json'...");
+  JsonFileReader clientInfo(CLIENT_INFO_PATH);
+  std::string username = clientInfo.Read<std::string>("username");
+
+  Debug::Log("Initializing the client...");
+  client = new Client(username);
 }
-void processCommand(std::string command, std::vector<std::string> args)
+
+App::~App()
 {
+  delete client;
+}
+
+void App::Run() {
+  while (!client->ConnectTo("localhost", 1234));
   
+  std::thread clientThread(&Client::Listen, client);
+
+  clientThread.join();
 }
