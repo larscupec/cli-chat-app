@@ -1,19 +1,20 @@
 #include "Debug.hpp"
+#include "WindowManager.hpp"
 #include <string>
 #include <ctime>
-#include "Console.hpp"
-
-bool Debug::writeToConsole = false;
+#include "Window.hpp"
 
 std::vector<std::string> Debug::messages;
 
 void Debug::Log(std::string message) {
-  messages.push_back("[" + GetCurrentDateTime() + "] " + message);
-
-  if (writeToConsole) {
-    Console::WriteLine(messages.back());
-  }
+  message = "[" + GetCurrentDateTime() + "] " + message;
+  messages.push_back(message);
+  WindowManager::GetInstance()->GetDebugWindow()->PrintLine(message);
 }
+
+void Debug::LogError(std::string message) { Log("Error: " + message); }
+
+void Debug::LogWarning(std::string message) { Log("Warning: " + message); }
 
 // Taken from (lol)
 // https://stackoverflow.com/questions/997946/how-to-get-current-time-and-date-in-c

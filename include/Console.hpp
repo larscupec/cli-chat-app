@@ -1,15 +1,26 @@
 #pragma once
 
+#include "IConsoleMode.hpp"
 #include <string>
 
-class Console
-{
-public:
-  Console() {}
-  ~Console() {}
+class App;
+class Client;
 
-  static void WriteLine(std::string message);
-  
+class Console {
+public:
+  Console(App *app, Client *client);
+  ~Console();
+
+  void ProcessInput();
+
+  void SetConsoleMode(IConsoleMode *consoleMode);
+
 private:
-  
-};    
+  IConsoleMode *consoleMode = nullptr;
+  App *app = nullptr;
+  Client *client = nullptr;
+
+  std::string ReadLine();
+  void Clear();
+  void Edit();
+};

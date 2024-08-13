@@ -6,14 +6,14 @@
 class Debug
 {
 public:
+  Debug() = delete;
+  
   static void Log(std::string message);
-
-  static void SetWriteToConsole(bool state) { writeToConsole = state; }
+  static void LogError(std::string message);
+  static void LogWarning(std::string message);
 
 private:
   static std::vector<std::string> messages;
-
-  static bool writeToConsole;
 
   static const std::string GetCurrentDateTime();
 };    

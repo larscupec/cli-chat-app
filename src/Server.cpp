@@ -37,7 +37,6 @@ Server::Server(int port) {
 }
 
 Server::~Server() {
-  Debug::Log("Stopping the server...");
   enet_host_destroy(server);
   delete messageHandler;
   delete chat;
@@ -45,12 +44,13 @@ Server::~Server() {
 
 void Server::Start() {
   Debug::Log("Server started on port " + std::to_string(address.port));
+
   isRunning = true;
 
   ENetEvent event;
 
   while (isRunning) {
-    while (enet_host_service(server, &event, 1000) > 0) {
+    if (enet_host_service(server, &event, 1000) > 0) {
       switch (event.type) {
       case ENET_EVENT_TYPE_CONNECT:
         Debug::Log("Server: Incoming connection from " +
@@ -62,9 +62,9 @@ void Server::Start() {
         ENetPeer *peer = event.peer;
         Message *message = Message::Parse(data);
 
-        Debug::Log("Server: A [" + message->GetTypeAsString() + "] packet of length " +
-                   std::to_string(dataLength) + " was received from " +
-                   std::to_string(peer->address.host));
+        Debug::Log("Server: A [" + message->GetTypeAsString() +
+                   "] packet of length " + std::to_string(dataLength) +
+                   " was received from " + std::to_string(peer->address.host));
 
         messageHandler->Handle(message, peer);
 
@@ -73,15 +73,17 @@ void Server::Start() {
         break;
       }
       case ENET_EVENT_TYPE_DISCONNECT:
-        Debug::Log("Server: " + ((User *)(event.peer->data))->GetUsername() +
-                   " has left the server.");
+        Debug::Log("Server: A user has left the server.");
         break;
       }
     }
   }
 }
 
-void Server::Stop() { isRunning = false; }
+void Server::Stop() {
+  Debug::Log("Stopping server...");
+  isRunning = false;
+}
 
 void Server::SendTo(ENetPeer *peer, Message *message) {
   std::string messageString = message->ToJson().dump();

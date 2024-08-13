@@ -1,21 +1,26 @@
 #include "App.hpp"
-#include <filesystem>
-#include <thread>
-#include "JsonFileWriter.hpp"
-#include "JsonFileReader.hpp"
+#include "ChatMode.hpp"
 #include "Client.hpp"
+#include "CommandMode.hpp"
+#include "Console.hpp"
 #include "Debug.hpp"
+#include "JsonFileReader.hpp"
+#include "JsonFileWriter.hpp"
+#include "Window.hpp"
+#include "WindowManager.hpp"
+#include <filesystem>
+#include <ncursesw/ncurses.h>
+#include <string>
 
-App::App()
-{
-  const std::string CLIENT_INFO_PATH = "./clientInfo.json";
-  const std::string DEFAULT_USERNAME = "Guest";
-  
+const std::string CLIENT_INFO_PATH = "./clientInfo.json";
+const std::string DEFAULT_USERNAME = "Guest";
+
+App::App() {
   // Read the 'clientInfo.json' file
   // if it does not exist create one
-    
+
   if (!std::filesystem::exists(CLIENT_INFO_PATH)) {
-    Debug::Log("'clientInfo.json' not found, creating a new one...");
+    Debug::LogWarning("'clientInfo.json' not found, creating a new one...");
     JsonFileWriter clientInfo(CLIENT_INFO_PATH);
     clientInfo.Write("username", DEFAULT_USERNAME);
   }
@@ -26,17 +31,32 @@ App::App()
 
   Debug::Log("Initializing the client...");
   client = new Client(username);
+
+  Debug::Log("Initializing the console...");
+  console = new Console(this, client);
+
+  Debug::Log("Done!");
 }
 
-App::~App()
-{
+App::~App() {
   delete client;
+  delete console;
 }
 
 void App::Run() {
-  while (!client->ConnectTo("localhost", 1234));
-  
-  std::thread clientThread(&Client::Listen, client);
+  Debug::Log("Welcome " + client->GetUsername() + "!");
 
-  clientThread.join();
+  isRunning = true;
+
+  WindowManager::GetInstance()->GetChatWindow()->PrintLine(
+      "Welcome " + client->GetUsername() + "!");
+  
+  while (isRunning) {
+    console->ProcessInput();
+  }
+}
+
+void App::Quit() {
+  Debug::Log("Quitting...");
+  isRunning = false;
 }

@@ -9,7 +9,7 @@ if (UNIX AND NOT APPLE)
 endif (UNIX AND NOT APPLE)
 
 if (WIN32)
-   set(ENET_INCLUDE_DIR C:/msys64/ucrt64/include)
+   set(LIB_INCLUDE_DIR C:/msys64/ucrt64/include)
 endif (WIN32)
 
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
@@ -20,7 +20,7 @@ if (UNIX AND NOT APPLE)
 endif (UNIX AND NOT APPLE)
 
 if (WIN32)
-   target_include_directories(clichatapp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${ENET_INCLUDE_DIR})
+   target_include_directories(clichatapp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${LIB_INCLUDE_DIR})
 endif (WIN32)
 
-target_link_libraries(clichatapp PUBLIC -lenet)
+target_link_libraries(clichatapp PUBLIC -lenet -lncursesw)

@@ -18,6 +18,7 @@ public:
   void Disconnect();
 
   std::string GetUsername() { return username; }
+  bool GetIsConnected() { return isConnected; }
 
 private:
   std::string username = "";
