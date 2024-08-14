@@ -20,7 +20,7 @@ private:
   App *app = nullptr;
   Client *client = nullptr;
 
-  std::string ReadLine();
-  void Clear();
+  std::string ReadInput();
+  void ClearInput();
   void Edit();
 };

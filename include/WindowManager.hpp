@@ -1,5 +1,8 @@
 #pragma once
 
+#include <ncursesw/ncurses.h>
+#include <vector>
+
 class Window;
 
 class WindowManager {
@@ -12,11 +15,21 @@ public:
   Window *GetConsoleWindow() { return consoleWindow; }
   Window *GetDebugWindow() { return debugWindow; }
 
+  void FocusNextWindow();
+
+  Window *GetFocusedWindow() { return windows[focusedWindowIndex]; }
+
 private:
   WindowManager();
   static WindowManager *instance;
 
+  WINDOW *mainWindow = nullptr;
+
   Window *chatWindow = nullptr;
   Window *consoleWindow = nullptr;
   Window *debugWindow = nullptr;
+
+  size_t focusedWindowIndex = 0;
+
+  std::vector<Window*> windows;
 };

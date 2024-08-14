@@ -1,10 +1,10 @@
 #include "Console.hpp"
 #include "ChatMode.hpp"
+#include "Client.hpp"
 #include "CommandMode.hpp"
 #include "Debug.hpp"
 #include "Window.hpp"
 #include "WindowManager.hpp"
-#include "Client.hpp"
 
 Console::Console(App *app, Client *client) : app(app), client(client) {
   // note: The console starts in Command Mode
@@ -14,23 +14,21 @@ Console::Console(App *app, Client *client) : app(app), client(client) {
 
 Console::~Console() { delete consoleMode; }
 
-std::string Console::ReadLine() {
-  Window *window = WindowManager::GetInstance()->GetConsoleWindow();
-  return window->ReadLine();
+std::string Console::ReadInput() {
+  return WindowManager::GetInstance()->GetConsoleWindow()->ReadLine();
 }
 
-void Console::Clear() {
-  WindowManager::GetInstance()->GetConsoleWindow()->Clear();
+void Console::ClearInput() {
+  WindowManager::GetInstance()->GetConsoleWindow()->ClearLine();
 }
 
 void Console::Edit() {
   const short leftmostCursorPositionX = 1;
 
   Window *consoleWindow = WindowManager::GetInstance()->GetConsoleWindow();
-  WINDOW *window =
-      WindowManager::GetInstance()->GetConsoleWindow()->GetWindow();
+  WINDOW *pad = WindowManager::GetInstance()->GetConsoleWindow()->GetPad();
 
-  keypad(window, true);
+  keypad(pad, true);
   noecho();
 
   short lastCharacterPositionX = leftmostCursorPositionX;
@@ -38,7 +36,7 @@ void Console::Edit() {
   int character;
 
   do {
-    character = wgetch(window);
+    character = wgetch(pad);
 
     int currentPositionX = consoleWindow->GetCursorPositionX();
     int currentPositionY = consoleWindow->GetCursorPositionY();
@@ -46,23 +44,23 @@ void Console::Edit() {
     switch (character) {
     case KEY_LEFT:
       if (currentPositionX > leftmostCursorPositionX) {
-        wmove(window, currentPositionY, currentPositionX - 1);
+        wmove(pad, currentPositionY, currentPositionX - 1);
       }
       break;
     case KEY_RIGHT:
       if (currentPositionX < lastCharacterPositionX) {
-        wmove(window, currentPositionY, currentPositionX + 1);
+        wmove(pad, currentPositionY, currentPositionX + 1);
       }
       break;
     case KEY_BACKSPACE:
       if (currentPositionX > leftmostCursorPositionX) {
-        mvwdelch(window, currentPositionY, currentPositionX - 1);
+        mvwdelch(pad, currentPositionY, currentPositionX - 1);
         lastCharacterPositionX--;
       }
       break;
     case KEY_DC:
       if (currentPositionX < lastCharacterPositionX) {
-        wdelch(window);
+        wdelch(pad);
         lastCharacterPositionX--;
       }
       break;
@@ -75,27 +73,37 @@ void Console::Edit() {
     case ('W' & 0x1F): {
       // Ctrl+W sets the console mode to Chat Mode
       if (!client->GetIsConnected()) {
-	Debug::LogError("Client: You must be connected to a server to enable Chat Mode");
-	return;
+        Debug::Log("You must be connected to a server to enable Chat Mode");
+        return;
       }
       ChatMode *chatMode = new ChatMode(client);
       SetConsoleMode(chatMode);
       break;
     }
+    case ('S' & 0x1F):
+      // Ctrl+S switches the focus on windows
+      WindowManager::GetInstance()->FocusNextWindow();
+      break;
+    case KEY_UP:
+      WindowManager::GetInstance()->GetFocusedWindow()->Scroll(-1);
+      break;
+    case KEY_DOWN:
+      WindowManager::GetInstance()->GetFocusedWindow()->Scroll(1);
+      break;
     default:
-      winsch(window, character);
-      wmove(window, currentPositionY, currentPositionX + 1);
+      winsch(pad, character);
+      wmove(pad, currentPositionY, currentPositionX + 1);
       lastCharacterPositionX = currentPositionX + 1;
       break;
     }
+    consoleWindow->Refresh();
   } while (character != '\n');
-  consoleWindow->Refresh();
 }
 
 void Console::ProcessInput() {
   Edit();
-  std::string input = ReadLine();
-  Clear();
+  std::string input = ReadInput();
+  ClearInput();
   consoleMode->HandleInput(input);
 }
 
