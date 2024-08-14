@@ -5,9 +5,10 @@
 #include "Debug.hpp"
 #include "Window.hpp"
 #include "WindowManager.hpp"
+#include <ncurses/ncurses.h>
 
 Console::Console(App *app, Client *client) : app(app), client(client) {
-  // note: The console starts in Command Mode
+  // Note: The console starts in Command Mode
   CommandMode *commandMode = new CommandMode(app, client, this);
   SetConsoleMode(commandMode);
 }
@@ -90,10 +91,21 @@ void Console::Edit() {
     case KEY_DOWN:
       WindowManager::GetInstance()->GetFocusedWindow()->Scroll(1);
       break;
+    case KEY_HOME:
+      wmove(pad, currentPositionY, 1);
+      break;
+    case KEY_END:
+      wmove(pad, currentPositionY, lastCharacterPositionX);
+      break;
     default:
       winsch(pad, character);
       wmove(pad, currentPositionY, currentPositionX + 1);
-      lastCharacterPositionX = currentPositionX + 1;
+      if (consoleWindow->GetCursorPositionX() > lastCharacterPositionX) {
+	lastCharacterPositionX = currentPositionX + 1;
+      }
+      else {
+	lastCharacterPositionX++;
+      }
       break;
     }
     consoleWindow->Refresh();
@@ -104,6 +116,9 @@ void Console::ProcessInput() {
   Edit();
   std::string input = ReadInput();
   ClearInput();
+  if (input.size() == 0) {
+    return;
+  }
   consoleMode->HandleInput(input);
 }
 

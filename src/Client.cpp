@@ -1,12 +1,11 @@
 #include "Client.hpp"
 #include "ClientChatHandler.hpp"
 #include "ClientInfoMessage.hpp"
+#include "ClientUserColorHandler.hpp"
 #include "Debug.hpp"
 #include <enet/enet.h>
 #include <stdexcept>
 #include <string>
-#include <thread>
-#include <chrono>
 
 Client::Client(std::string username) : username(username) {
   Debug::Log("Creating an ENet host for the client...");
@@ -20,7 +19,11 @@ Client::Client(std::string username) : username(username) {
                              "host for the client.");
   }
 
-  messageHandler = new ClientChatHandler();
+  ClientChatHandler *clientChatHandler = new ClientChatHandler();
+  ClientUserColorHandler *clientUserColorHandler = new ClientUserColorHandler(this);
+
+  messageHandler = clientChatHandler;
+  clientChatHandler->SetNext(clientUserColorHandler);
 }
 
 Client::~Client() {
@@ -118,7 +121,8 @@ void Client::Listen() {
     case ENET_EVENT_TYPE_DISCONNECT:
       Debug::Log("Client: Received disconnect acknowledgment");
       isConnected = false;
-      break;
+      Debug::Log("Client: You left the server");
+      return;
     }
   }
 

@@ -19,9 +19,13 @@ public:
 
   std::string GetUsername() { return username; }
   bool GetIsConnected() { return isConnected; }
+  int GetColor() { return color; }
+
+  void SetColor(int color) { this->color = color; }
 
 private:
   std::string username = "";
+  int color = 0;
 
   bool isConnected = false;
   bool isListening = false;

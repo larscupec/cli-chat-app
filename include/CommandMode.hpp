@@ -1,7 +1,6 @@
 #pragma once
 
 #include "IConsoleMode.hpp"
-#include <vector>
 
 class App;
 class Client;
@@ -19,7 +18,4 @@ private:
   App *app = nullptr;
   Client *client = nullptr;
   Console *console = nullptr;
-
-  std::vector<std::string> SplitString(std::string string,
-                                       std::string delimiter);
 };

@@ -4,7 +4,6 @@
 #include "Message.hpp"
 #include "ServerChatHandler.hpp"
 #include "ServerConnectionHandler.hpp"
-#include "User.hpp"
 #include "enet/enet.h"
 #include <stdexcept>
 #include <string>

@@ -1,7 +1,8 @@
 #pragma once
 
-enum MessageType {
+enum class MessageType {
   NONE,
   CLIENT_INFO,
-  CHAT_MESSAGE
+  CHAT_MESSAGE,
+  COLOR_MESSAGE,
 };

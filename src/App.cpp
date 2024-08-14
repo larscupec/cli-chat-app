@@ -59,4 +59,5 @@ void App::Run() {
 void App::Quit() {
   Debug::Log("Quitting...");
   isRunning = false;
+  client->Disconnect();
 }
