@@ -17,37 +17,30 @@ public:
   std::string ReadLine();
   void ClearLine();
 
-  void Scroll(int numberOfLines);
-
-  void ActivateColor(Color color) { wattron(pad, COLOR_PAIR((int)color)); }
-  void DeactivateColor(Color color) { wattroff(pad, COLOR_PAIR((int)color)); }
+  void ActivateColor(Color color);
+  void DeactivateColor(Color color);
 
   int GetCursorPositionX();
   int GetCursorPositionY();
-  int GetHeight() { return getmaxy(pad); }
-  int GetWidth() { return getmaxx(pad); }
+  int GetPadHeight() { return getmaxy(pad); }
+  int GetPadWidth() { return getmaxx(pad); }
   WINDOW *GetPad() { return pad; }
 
-  void SetHasFocus(bool state);
-
 private:
-  WINDOW *parent = nullptr; // The pointer to the WindowManager's window
+  WINDOW *parent = nullptr; // Pointer to the WindowManager's window
+  WINDOW *container = nullptr;
   WINDOW *pad = nullptr; // The pad is for writing text
 
   void DrawBorder();
   void DrawTitle();
+  void Clear();
+
+  int GetContainerHeight() { return getmaxy(container); }
+  int GetContainerWidth() { return getmaxx(container); }
 
   std::string title = "";
 
-  int initialWidth = 0;
-  int initialHeight = 0;
-
-  // Coordinates of the upper-left corner of the pad within the parent window
+  // Coordinates of the upper-left corner of the container within the parent window
   int positionX = 0;
   int positionY = 0;
-
-  int firstLine = 1;
-  bool hasFocus = false;
-  
-  int padPosition = 1; // Current line which the pad is displaying
 };

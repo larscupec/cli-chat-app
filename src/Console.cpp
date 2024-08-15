@@ -2,9 +2,9 @@
 #include "ChatMode.hpp"
 #include "Client.hpp"
 #include "CommandMode.hpp"
+#include "ConsoleWindow.hpp"
 #include "Debug.hpp"
 #include "Window.hpp"
-#include "WindowManager.hpp"
 #include <ncurses/ncurses.h>
 
 Console::Console(App *app, Client *client) : app(app), client(client) {
@@ -15,24 +15,21 @@ Console::Console(App *app, Client *client) : app(app), client(client) {
 
 Console::~Console() { delete consoleMode; }
 
-std::string Console::ReadInput() {
-  return WindowManager::GetInstance()->GetConsoleWindow()->ReadLine();
-}
+std::string Console::ReadInput() { return ConsoleWindow::ReadLine(); }
 
-void Console::ClearInput() {
-  WindowManager::GetInstance()->GetConsoleWindow()->ClearLine();
-}
+void Console::ClearInput() { ConsoleWindow::ClearLine(); }
 
 void Console::Edit() {
-  const short leftmostCursorPositionX = 1;
+  const int leftmostCursorPositionX = 0;
 
-  Window *consoleWindow = WindowManager::GetInstance()->GetConsoleWindow();
-  WINDOW *pad = WindowManager::GetInstance()->GetConsoleWindow()->GetPad();
+  Window *consoleWindow = ConsoleWindow::GetWindow();
+  WINDOW *pad = consoleWindow->GetPad();
 
   keypad(pad, true);
   noecho();
+  scrollok(pad, false);
 
-  short lastCharacterPositionX = leftmostCursorPositionX;
+  int lastCharacterPositionX = leftmostCursorPositionX;
 
   int character;
 
@@ -71,8 +68,8 @@ void Console::Edit() {
       SetConsoleMode(commandMode);
       break;
     }
-    case ('W' & 0x1F): {
-      // Ctrl+W sets the console mode to Chat Mode
+    case ('A' & 0x1F): {
+      // Ctrl+A sets the console mode to Chat Mode
       if (!client->GetIsConnected()) {
         Debug::Log("You must be connected to a server to enable Chat Mode");
         return;
@@ -81,30 +78,40 @@ void Console::Edit() {
       SetConsoleMode(chatMode);
       break;
     }
-    case ('S' & 0x1F):
-      // Ctrl+S switches the focus on windows
-      WindowManager::GetInstance()->FocusNextWindow();
-      break;
-    case KEY_UP:
-      WindowManager::GetInstance()->GetFocusedWindow()->Scroll(-1);
-      break;
-    case KEY_DOWN:
-      WindowManager::GetInstance()->GetFocusedWindow()->Scroll(1);
-      break;
     case KEY_HOME:
-      wmove(pad, currentPositionY, 1);
+      wmove(pad, currentPositionY, 0);
       break;
     case KEY_END:
       wmove(pad, currentPositionY, lastCharacterPositionX);
+      break;
+    case '\n':
+      mvwaddch(pad, currentPositionY, lastCharacterPositionX, '\n');
+      break;
+    case KEY_PPAGE:
+    case KEY_NPAGE:
+    case KEY_IC:
+    case KEY_EXIT:
+    case KEY_F(0):
+    case KEY_F(1):
+    case KEY_F(2):
+    case KEY_F(3):
+    case KEY_F(4):
+    case KEY_F(5):
+    case KEY_F(6):
+    case KEY_F(7):
+    case KEY_F(8):
+    case KEY_F(9):
+    case KEY_F(10):
+    case KEY_F(11):
+    case KEY_F(12):
       break;
     default:
       winsch(pad, character);
       wmove(pad, currentPositionY, currentPositionX + 1);
       if (consoleWindow->GetCursorPositionX() > lastCharacterPositionX) {
-	lastCharacterPositionX = currentPositionX + 1;
-      }
-      else {
-	lastCharacterPositionX++;
+        lastCharacterPositionX = currentPositionX + 1;
+      } else {
+        lastCharacterPositionX++;
       }
       break;
     }

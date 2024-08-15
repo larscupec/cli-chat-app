@@ -1,8 +1,8 @@
 #include "Debug.hpp"
 #include "Color.hpp"
-#include "Window.hpp"
-#include "WindowManager.hpp"
+#include "DebugWindow.hpp"
 #include <ctime>
+#include <iostream>
 #include <string>
 
 std::vector<std::string> Debug::messages;
@@ -14,8 +14,6 @@ const std::string GetCurrentDateTime() {
   struct tm tstruct;
   char buf[80];
   tstruct = *localtime(&now);
-  // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
-  // for more information about date/time format
   strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
 
   return buf;
@@ -24,18 +22,18 @@ const std::string GetCurrentDateTime() {
 void Debug::Log(std::string message) {
   message = "[" + GetCurrentDateTime() + "] " + message;
   messages.push_back(message);
-  WindowManager::GetInstance()->GetDebugWindow()->PrintLine(message);
+  DebugWindow::PrintLine(message);
+  std::cout << message << std::endl;
 }
 
 void Debug::LogError(std::string message) {
-  WindowManager::GetInstance()->GetDebugWindow()->ActivateColor(Color::RED);
+  DebugWindow::ActivateColor(Color::RED);
   Log("Error: " + message);
-  WindowManager::GetInstance()->GetDebugWindow()->DeactivateColor(Color::RED);
+  DebugWindow::DeactivateColor(Color::RED);
 }
 
 void Debug::LogWarning(std::string message) {
-  WindowManager::GetInstance()->GetDebugWindow()->ActivateColor(Color::YELLOW);
+  DebugWindow::ActivateColor(Color::YELLOW);
   Log("Warning: " + message);
-  WindowManager::GetInstance()->GetDebugWindow()->DeactivateColor(
-      Color::YELLOW);
+  DebugWindow::DeactivateColor(Color::YELLOW);
 }

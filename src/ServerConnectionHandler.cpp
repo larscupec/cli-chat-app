@@ -1,15 +1,15 @@
 #include "ServerConnectionHandler.hpp"
 #include "ChatMessage.hpp"
 #include "ClientInfoMessage.hpp"
-#include "UserColorMessage.hpp"
+#include "WelcomeMessage.hpp"
 #include "Debug.hpp"
 #include "Server.hpp"
 #include "User.hpp"
-#include <string>
 #include <random>
+#include "Chat.hpp"
 
-ServerConnectionHandler::ServerConnectionHandler(Server *server)
-    : server(server) {}
+ServerConnectionHandler::ServerConnectionHandler(Server *server, Chat *chat)
+  : server(server), chat(chat) {}
 
 bool ServerConnectionHandler::HandleMessage(Message *message, ENetPeer *peer) {
 
@@ -28,13 +28,17 @@ bool ServerConnectionHandler::HandleMessage(Message *message, ENetPeer *peer) {
 
   Debug::Log("Server: " + clientInfo->GetUsername() + " has joined the server.");
 
-  const int serverChatColor = 8;
-
-  UserColorMessage *userColorMessage = new UserColorMessage(userColor);
-  server->SendTo(peer, userColorMessage);
+  std::string conversation = chat->ToJson().dump();
   
-  ChatMessage welcomeMessage("Server", serverChatColor, clientInfo->GetUsername() + " has joined the server.");
-  server->Broadcast(&welcomeMessage);
+  WelcomeMessage *welcomeMessage = new WelcomeMessage(userColor, conversation);
+  server->SendTo(peer, welcomeMessage);
+
+  const int serverChatColor = 8;
+  
+  ChatMessage newUserMessage("Server", serverChatColor, clientInfo->GetUsername() + " has joined the server.");
+  server->Broadcast(&newUserMessage);
+
+  delete message;
 
   return true;
 }

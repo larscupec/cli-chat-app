@@ -1,15 +1,25 @@
 #include "Client.hpp"
+#include "ChatWindow.hpp"
 #include "ClientChatHandler.hpp"
 #include "ClientInfoMessage.hpp"
-#include "ClientUserColorHandler.hpp"
+#include "ClientWelcomeHandler.hpp"
+#include "ClientWelcomeHandler.hpp"
 #include "Debug.hpp"
 #include <enet/enet.h>
 #include <stdexcept>
 #include <string>
 
+const size_t OUTGOING_CONNECTION_COUNT = 1;
+const size_t MAX_CHANNELS = 2;
+const unsigned int INCOMING_BANDWIDTH = 0;
+const unsigned int OUTGOING_BANDWIDTH = 0;
+const unsigned int EVENT_TIMEOUT_MS = 1000;
+const unsigned int CONNECTION_TIMEOUT_MS = 5000;
+const unsigned int DISCONNECTION_TIMEOUT_MS = 3000;
+
 Client::Client(std::string username) : username(username) {
   Debug::Log("Creating an ENet host for the client...");
-  client = enet_host_create(NULL, 1, 2, 0, 0);
+  client = enet_host_create(NULL, OUTGOING_CONNECTION_COUNT, MAX_CHANNELS, INCOMING_BANDWIDTH, OUTGOING_BANDWIDTH);
 
   if (!client) {
     Debug::LogError(
@@ -20,15 +30,17 @@ Client::Client(std::string username) : username(username) {
   }
 
   ClientChatHandler *clientChatHandler = new ClientChatHandler();
-  ClientUserColorHandler *clientUserColorHandler = new ClientUserColorHandler(this);
+  ClientWelcomeHandler *clientWelcomeHandler = new ClientWelcomeHandler(this, clientChatHandler);
 
   messageHandler = clientChatHandler;
-  clientChatHandler->SetNext(clientUserColorHandler);
+  clientChatHandler->SetNext(clientWelcomeHandler);
 }
 
 Client::~Client() {
-  Debug::Log("Closing the client...");
+  Debug::Log("Deleting the client...");
   enet_host_destroy(client);
+  
+  delete messageHandler;
 }
 
 bool Client::ConnectTo(std::string ip, int port) {
@@ -55,7 +67,7 @@ bool Client::ConnectTo(std::string ip, int port) {
         "Client: No available peers for initiating an ENet connection.");
   }
 
-  if (enet_host_service(client, &event, 5000) > 0 &&
+  if (enet_host_service(client, &event, CONNECTION_TIMEOUT_MS) > 0 &&
       event.type == ENET_EVENT_TYPE_CONNECT) {
     Debug::Log("Client: Successfully connected to " + ip + " on port " +
                std::to_string(port));
@@ -86,7 +98,7 @@ void Client::Listen() {
   isListening = true;
 
   while (isListening) {
-    if (enet_host_service(client, &event, 1000) > 0) {
+    if (enet_host_service(client, &event, EVENT_TIMEOUT_MS) > 0) {
       switch (event.type) {
       case ENET_EVENT_TYPE_RECEIVE: {
         json data = json::parse((char *)event.packet->data);
@@ -112,7 +124,7 @@ void Client::Listen() {
   enet_peer_disconnect(connection, 0);
   
   Debug::Log("Client: Waiting for disconnect acknowledgment...");
-  while (enet_host_service(client, &event, 3000) > 0) {
+  while (enet_host_service(client, &event, DISCONNECTION_TIMEOUT_MS) > 0) {
     switch (event.type) {
     case ENET_EVENT_TYPE_RECEIVE:
       Debug::Log("Client: Destroying packet");
@@ -122,6 +134,7 @@ void Client::Listen() {
       Debug::Log("Client: Received disconnect acknowledgment");
       isConnected = false;
       Debug::Log("Client: You left the server");
+      ChatWindow::PrintLine("You left the server");
       return;
     }
   }
@@ -134,6 +147,7 @@ void Client::Listen() {
   }
 
   Debug::Log("Client: You left the server");
+  ChatWindow::PrintLine("You left the server");
 }
 
 void Client::Send(Message *message) {

@@ -1,22 +1,18 @@
 #pragma once
 
 #include <ctime>
-#include <map>
+#include <vector>
 #include "ChatMessage.hpp"
 
 class Chat {
 public:
   Chat() {}
-  ~Chat() {
-    for (auto it : messages) {
-      delete it.second;
-    }
-    messages.clear();
-  }
+  ~Chat();
 
-  void Add(ChatMessage *message) { messages[nextMessageId++] = message; }
+  void Add(ChatMessage *message) { messages.push_back(message); }
+
+  json ToJson();
 
 private:
-  std::map<unsigned long long, ChatMessage*> messages;
-  unsigned long long nextMessageId = 0;
+  std::vector<ChatMessage*> messages;
 };

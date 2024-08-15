@@ -1,6 +1,7 @@
 #include "Server.hpp"
 #include "Chat.hpp"
 #include "Debug.hpp"
+#include "JsonFileWriter.hpp"
 #include "Message.hpp"
 #include "ServerChatHandler.hpp"
 #include "ServerConnectionHandler.hpp"
@@ -9,6 +10,10 @@
 #include <string>
 
 const size_t MAX_USER_COUNT = 32;
+const size_t MAX_CHANNELS = 2;
+const unsigned int INCOMING_BANDWIDTH = 0;
+const unsigned int OUTGOING_BANDWIDTH = 0;
+const unsigned int EVENT_TIMEOUT_MS = 1000;
 
 Server::Server(int port) {
   address.host = ENET_HOST_ANY;
@@ -16,7 +21,7 @@ Server::Server(int port) {
 
   Debug::Log("Creatng an ENet host for the server...");
 
-  server = enet_host_create(&address, MAX_USER_COUNT, 2, 0, 0);
+  server = enet_host_create(&address, MAX_USER_COUNT, MAX_CHANNELS, INCOMING_BANDWIDTH, OUTGOING_BANDWIDTH);
 
   if (!server) {
     Debug::Log("An error occurred while trying to create an ENet host for the "
@@ -28,7 +33,7 @@ Server::Server(int port) {
   chat = new Chat();
 
   ServerConnectionHandler *connectionHandler =
-      new ServerConnectionHandler(this);
+    new ServerConnectionHandler(this, chat);
   ServerChatHandler *chatMessageHandler = new ServerChatHandler(this, chat);
 
   messageHandler = connectionHandler;
@@ -37,6 +42,7 @@ Server::Server(int port) {
 
 Server::~Server() {
   enet_host_destroy(server);
+  
   delete messageHandler;
   delete chat;
 }
@@ -49,7 +55,7 @@ void Server::Start() {
   ENetEvent event;
 
   while (isRunning) {
-    if (enet_host_service(server, &event, 1000) > 0) {
+    if (enet_host_service(server, &event, EVENT_TIMEOUT_MS) > 0) {
       switch (event.type) {
       case ENET_EVENT_TYPE_CONNECT:
         Debug::Log("Server: Incoming connection from " +
@@ -67,7 +73,6 @@ void Server::Start() {
 
         messageHandler->Handle(message, peer);
 
-        delete message;
         enet_packet_destroy(event.packet);
         break;
       }
@@ -80,6 +85,10 @@ void Server::Start() {
 }
 
 void Server::Stop() {
+  Debug::Log("Saving conversation...");
+  JsonFileWriter conversationFile("./conversation.json");
+  conversationFile.Write(chat->ToJson());
+
   Debug::Log("Stopping server...");
   isRunning = false;
 }

@@ -1,13 +1,12 @@
 #include "App.hpp"
 #include "ChatMode.hpp"
+#include "ChatWindow.hpp"
 #include "Client.hpp"
 #include "CommandMode.hpp"
 #include "Console.hpp"
 #include "Debug.hpp"
 #include "JsonFileReader.hpp"
 #include "JsonFileWriter.hpp"
-#include "Window.hpp"
-#include "WindowManager.hpp"
 #include <filesystem>
 #include <ncursesw/ncurses.h>
 #include <string>
@@ -48,8 +47,7 @@ void App::Run() {
 
   isRunning = true;
 
-  WindowManager::GetInstance()->GetChatWindow()->PrintLine(
-      "Welcome " + client->GetUsername() + "!");
+  ChatWindow::PrintLine("Welcome " + client->GetUsername() + "!");
   
   while (isRunning) {
     console->ProcessInput();
@@ -57,7 +55,7 @@ void App::Run() {
 }
 
 void App::Quit() {
-  Debug::Log("Quitting...");
+  Debug::Log("Exiting clichatapp...");
   isRunning = false;
   client->Disconnect();
 }

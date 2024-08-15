@@ -1,8 +1,7 @@
 #include "ClientChatHandler.hpp"
 #include "ChatMessage.hpp"
 #include "Color.hpp"
-#include "WindowManager.hpp"
-#include "Window.hpp"
+#include "ChatWindow.hpp"
 
 bool ClientChatHandler::HandleMessage(Message *message, ENetPeer *peer) {
   if (message->GetType() != MessageType::CHAT_MESSAGE) {
@@ -11,12 +10,10 @@ bool ClientChatHandler::HandleMessage(Message *message, ENetPeer *peer) {
 
   ChatMessage *newChat = (ChatMessage *)message;
 
-  Window *chatWindow = WindowManager::GetInstance()->GetChatWindow();
-
-  chatWindow->ActivateColor((Color)newChat->GetColor());
-  chatWindow->Print(newChat->GetSender());
-  chatWindow->DeactivateColor((Color)newChat->GetColor());
-  chatWindow->PrintLine(": " + newChat->GetContent());
+  ChatWindow::ActivateColor((Color)newChat->GetColor());
+  ChatWindow::Print(newChat->GetSender());
+  ChatWindow::DeactivateColor((Color)newChat->GetColor());
+  ChatWindow::PrintLine(": " + newChat->GetContent());
 
   return true;
 }
