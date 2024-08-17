@@ -13,7 +13,7 @@ bool ClientWelcomeHandler::HandleMessage(Message *message, ENetPeer *peer) {
 
   WelcomeMessage *welcomeMessage = (WelcomeMessage *)message;
 
-  client->SetColor(welcomeMessage->GetUserColor());
+  client->SetUserColor(welcomeMessage->GetUserColor());
 
   json conversation = json::parse(welcomeMessage->GetConversation());
 
