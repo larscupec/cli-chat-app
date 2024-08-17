@@ -1,6 +1,7 @@
 #include "Message.hpp"
 #include "ChatMessage.hpp"
 #include "ClientInfoMessage.hpp"
+#include "Color.hpp"
 #include "WelcomeMessage.hpp"
 #include "UnknownMessage.hpp"
 
@@ -19,12 +20,12 @@ Message *Message::Parse(json message) {
   } else if (messageType == CHAT_MESSAGE) {
     std::string sender = message["sender"].get<std::string>();
     std::string content = message["content"].get<std::string>();
-    int color = message["color"].get<int>();
+    Color color = (Color)message["color"].get<int>();
 
     return new ChatMessage(sender, color, content);
   }
   else if (messageType == WELCOME_MESSAGE) {
-    int userColor = message["userColor"].get<int>();
+    Color userColor = (Color)message["userColor"].get<int>();
     std::string conversation = message["conversation"].get<std::string>();
 
     return new WelcomeMessage(userColor, conversation);

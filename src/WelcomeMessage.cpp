@@ -4,7 +4,7 @@ json WelcomeMessage::ToJson() {
   json result;
 
   result["type"] = GetTypeAsString();
-  result["userColor"] = userColor;
+  result["userColor"] = (int)userColor;
   result["conversation"] = conversation;
 
   return result;

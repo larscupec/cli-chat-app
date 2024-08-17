@@ -1,10 +1,12 @@
 #include "Server.hpp"
 #include "Chat.hpp"
+#include "ChatMessage.hpp"
 #include "Debug.hpp"
 #include "JsonFileWriter.hpp"
 #include "Message.hpp"
 #include "ServerChatHandler.hpp"
 #include "ServerConnectionHandler.hpp"
+#include "User.hpp"
 #include "enet/enet.h"
 #include <stdexcept>
 #include <string>
@@ -76,9 +78,14 @@ void Server::Start() {
         enet_packet_destroy(event.packet);
         break;
       }
-      case ENET_EVENT_TYPE_DISCONNECT:
-        Debug::Log("Server: A user has left the server.");
+      case ENET_EVENT_TYPE_DISCONNECT: {
+	User *user = (User*)event.peer->data;
+	Debug::Log("Server: " + user->GetUsername() + " has left the server.");
+	ChatMessage *userLeftMessage = new ChatMessage("Server", SERVER_CHAT_COLOR, user->GetUsername() + " has left the server.");
+	chat->Add(userLeftMessage);
+	Broadcast(userLeftMessage);
         break;
+      }
       }
     }
   }

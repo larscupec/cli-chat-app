@@ -2,6 +2,7 @@
 
 #include <string>
 #include <enet/enet.h>
+#include "Color.hpp"
 
 class Message;
 class MessageHandler;
@@ -19,13 +20,13 @@ public:
 
   std::string GetUsername() { return username; }
   bool GetIsConnected() { return isConnected; }
-  int GetColor() { return color; }
+  Color GetUserColor() { return userColor; }
 
-  void SetColor(int color) { this->color = color; }
+  void SetUserColor(Color userColor) { this->userColor = userColor; }
 
 private:
   std::string username = "";
-  int color = 0;
+  Color userColor = Color::WHITE;
 
   bool isConnected = false;
   bool isListening = false;

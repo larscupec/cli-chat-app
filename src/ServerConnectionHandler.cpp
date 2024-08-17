@@ -23,7 +23,7 @@ bool ServerConnectionHandler::HandleMessage(Message *message, ENetPeer *peer) {
   std::mt19937 randomNumberGenerator(device());
   std::uniform_int_distribution<std::mt19937::result_type> distribution(2, 7);
 
-  int userColor = distribution(randomNumberGenerator);
+  Color userColor = (Color)distribution(randomNumberGenerator);
   peer->data = new User(clientInfo->GetUsername(), userColor);
 
   Debug::Log("Server: " + clientInfo->GetUsername() + " has joined the server.");
@@ -33,10 +33,9 @@ bool ServerConnectionHandler::HandleMessage(Message *message, ENetPeer *peer) {
   WelcomeMessage *welcomeMessage = new WelcomeMessage(userColor, conversation);
   server->SendTo(peer, welcomeMessage);
 
-  const int serverChatColor = 8;
-  
-  ChatMessage newUserMessage("Server", serverChatColor, clientInfo->GetUsername() + " has joined the server.");
-  server->Broadcast(&newUserMessage);
+  ChatMessage *newUserMessage = new ChatMessage("Server", SERVER_CHAT_COLOR, clientInfo->GetUsername() + " has joined the server.");
+  chat->Add(newUserMessage);
+  server->Broadcast(newUserMessage);
 
   delete message;
 
