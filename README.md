@@ -46,7 +46,6 @@ While In Chat Mode everything you type will be processed as a chat message and s
  - Disconnect all peers when closing the server
  - Server UI
  - More server commands (kick, ban, unban, mute)
- - Store server's messages in the conversation
  - Remember user color when reconnecting to a server
  - Closing and opening windows
 
