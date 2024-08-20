@@ -4,7 +4,7 @@ A simple chat app that runs in your terminal.
 
 ![Imgur Image](https://imgur.com/HPxQdCz.jpg)
 
-## Instalation
+## Installation
 
 Once I build it with static libs you will just have to run the .exe file and have fun, but until then... you can't! Yes, there is no download for now. Best you can do is compile the source code yourself if you want it that bad.
 
