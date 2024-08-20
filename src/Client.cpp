@@ -29,17 +29,6 @@ Client *Client::GetInstance() {
 }
 
 Client::Client() {
-  Debug::Log("Creating an ENet host for the client...");
-  client = enet_host_create(NULL, OUTGOING_CONNECTION_COUNT, MAX_CHANNELS, INCOMING_BANDWIDTH, OUTGOING_BANDWIDTH);
-
-  if (!client) {
-    Debug::LogError(
-        "An error occurred while trying to create an ENet host for the "
-        "client.");
-    throw std::runtime_error("An error occurred while trying to create an ENet "
-                             "host for the client.");
-  }
-
   ClientChatHandler *chatHandler = new ClientChatHandler();
   ClientWelcomeHandler *welcomeHandler = new ClientWelcomeHandler(chatHandler);
   LeaveCommand *leaveCommand = new LeaveCommand();
@@ -62,6 +51,17 @@ bool Client::ConnectTo(std::string ip, int port) {
   if (isConnected) {
     Debug::LogError("Client: Already connected to a server");
     return false;
+  }
+
+  Debug::Log("Creating an ENet host for the client...");
+  client = enet_host_create(NULL, OUTGOING_CONNECTION_COUNT, MAX_CHANNELS, INCOMING_BANDWIDTH, OUTGOING_BANDWIDTH);
+
+  if (!client) {
+    Debug::LogError(
+        "An error occurred while trying to create an ENet host for the "
+        "client.");
+    throw std::runtime_error("An error occurred while trying to create an ENet "
+                             "host for the client.");
   }
   
   Debug::Log("Client: Connecting to " + ip + " on port " +

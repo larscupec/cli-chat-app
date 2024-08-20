@@ -10,10 +10,11 @@ class UserColorTable;
 class Server
 {
 public:
-  Server(int port);
   ~Server();
 
-  void Start();
+  static Server *GetInstance();
+
+  void Start(int port);
   void Stop();
 
   void SendTo(ENetPeer *peer, Message *message);
@@ -21,10 +22,14 @@ public:
 
   Chat *GetChat() { return chat; }
   UserColorTable *GetUserColorTable() { return userColorTable; }
+  bool GetIsRunning() { return isRunning; }
 
 private:
+  Server();
+
+  static Server *instance;
+  
   ENetHost *server = nullptr;
-  ENetAddress address;
 
   MessageHandler *messageHandler = nullptr;
   Chat *chat = nullptr;

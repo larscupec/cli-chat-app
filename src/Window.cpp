@@ -1,23 +1,9 @@
 #include "Window.hpp"
-#include <algorithm>
+#include "StringHelper.hpp"
 #include <cctype>
 #include <cstdlib>
 #include <ncurses/ncurses.h>
 #include <string>
-
-std::string TrimString(std::string string) {
-  // Trim from start
-  string.erase(string.begin(),
-               std::find_if(string.begin(), string.end(), [](unsigned char ch) {
-                 return !std::isspace(ch);
-               }));
-  // Trim from end
-  string.erase(std::find_if(string.rbegin(), string.rend(),
-                            [](unsigned char ch) { return !std::isspace(ch); })
-                   .base(),
-               string.end());
-  return string;
-}
 
 Window::Window(WINDOW *parent, std::string title, int height, int width,
                int positionY, int positionX) {
@@ -78,7 +64,7 @@ std::string Window::ReadLine() {
   const int BUFFER_SIZE = GetPadWidth();
   char buffer[BUFFER_SIZE];
   int ret = mvwinnstr(pad, GetCursorPositionY(), 0, buffer, BUFFER_SIZE - 1);
-  return TrimString(buffer);
+  return StringHelper::TrimString(buffer);
 }
 
 void Window::ClearLine() {

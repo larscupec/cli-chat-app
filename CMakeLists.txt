@@ -16,8 +16,8 @@ if (UNIX AND NOT APPLE)
 endif (UNIX AND NOT APPLE)
 
 if (WIN32)
-   target_include_directories(${PROJECT_NAME} PRIVATE include C:/msys64/ucrt64/include)
-   target_link_directories(${PROJECT_NAME} PRIVATE C:/msys64/ucrt64/lib)
+   target_include_directories(${PROJECT_NAME} PUBLIC include C:/msys64/ucrt64/include)
+   target_link_directories(${PROJECT_NAME} PUBLIC C:/msys64/ucrt64/lib)
 endif (WIN32)
 
-target_link_libraries(${PROJECT_NAME} ncursesw enet)
+target_link_libraries(${PROJECT_NAME} PUBLIC ncursesw enet)

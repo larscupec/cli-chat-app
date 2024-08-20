@@ -1,11 +1,12 @@
 #include "Console.hpp"
 #include "ChatMode.hpp"
 #include "Client.hpp"
-#include "CommandMode.hpp"
+#include "ClientCommandMode.hpp"
 #include "ConsoleWindow.hpp"
 #include "Debug.hpp"
 #include "Window.hpp"
 #include <ncurses/ncurses.h>
+#include "App.hpp"
 
 Console *Console::instance = nullptr;
 
@@ -64,8 +65,10 @@ void Console::Edit() {
       }
       break;
     case ('Q' & 0x1F): {
-      // Ctrl+Q sets the console mode to Command Mode
-      SetConsoleMode(CommandMode::GetInstance());
+      // Ctrl+Q sets the console mode to Client Command Mode
+      if (!App::GetInstance()->GetIsServer()) {
+	SetConsoleMode(ClientCommandMode::GetInstance());
+      }
       break;
     }
     case ('A' & 0x1F): {

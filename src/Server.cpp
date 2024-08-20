@@ -1,11 +1,13 @@
 #include "Server.hpp"
 #include "Chat.hpp"
 #include "ChatMessage.hpp"
+#include "Console.hpp"
 #include "Debug.hpp"
 #include "DisconnectMessage.hpp"
 #include "JsonFileWriter.hpp"
 #include "Message.hpp"
 #include "ServerChatHandler.hpp"
+#include "ServerCommandMode.hpp"
 #include "ServerConnectionHandler.hpp"
 #include "User.hpp"
 #include "UserColorTable.hpp"
@@ -19,7 +21,41 @@ const unsigned int INCOMING_BANDWIDTH = 0;
 const unsigned int OUTGOING_BANDWIDTH = 0;
 const unsigned int EVENT_TIMEOUT_MS = 1000;
 
-Server::Server(int port) {
+Server *Server::instance = nullptr;
+
+Server::Server() {
+  chat = new Chat();
+  userColorTable = new UserColorTable();
+
+  ServerConnectionHandler *connectionHandler =
+    new ServerConnectionHandler(this);
+  ServerChatHandler *chatMessageHandler = new ServerChatHandler(this);
+
+  connectionHandler->SetNext(chatMessageHandler);
+
+  messageHandler = connectionHandler;
+}
+
+Server::~Server() { 
+  delete messageHandler;
+  delete chat;
+}
+
+Server *Server::GetInstance() {
+  if (!instance) {
+    instance = new Server();
+  }
+  return instance;
+}
+
+void Server::Start(int port) {
+  if (isRunning) {
+    Debug::LogError("Server: Already running");
+    return;
+  }
+  
+  ENetAddress address;
+  
   address.host = ENET_HOST_ANY;
   address.port = port;
 
@@ -34,25 +70,8 @@ Server::Server(int port) {
                              "host for the server.");
   }
 
-  chat = new Chat();
-  userColorTable = new UserColorTable();
-
-  ServerConnectionHandler *connectionHandler =
-    new ServerConnectionHandler(this);
-  ServerChatHandler *chatMessageHandler = new ServerChatHandler(this);
-
-  messageHandler = connectionHandler;
-  messageHandler->SetNext(chatMessageHandler);
-}
-
-Server::~Server() {
-  enet_host_destroy(server);
+  Debug::Log("Done!");
   
-  delete messageHandler;
-  delete chat;
-}
-
-void Server::Start() {
   Debug::Log("Server started on port " + std::to_string(address.port));
 
   isRunning = true;
@@ -95,18 +114,24 @@ void Server::Start() {
       }
     }
   }
+
+  enet_host_destroy(server);
+  server = nullptr;
+
+  Debug::Log("Done!");
 }
 
 void Server::Stop() {
-  Debug::Log("Saving conversation...");
+  Debug::Log("Server: Saving conversation...");
   JsonFileWriter conversationFile("./conversation.json");
   conversationFile.Write(chat->ToJson());
 
-  Debug::Log("Stopping server...");
-  isRunning = false;
-
   DisconnectMessage disconnectMessage;
   Broadcast(&disconnectMessage);
+  enet_host_flush(server);
+  
+  Debug::Log("Stopping server...");
+  isRunning = false;
 }
 
 void Server::SendTo(ENetPeer *peer, Message *message) {
