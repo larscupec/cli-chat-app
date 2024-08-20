@@ -51,7 +51,7 @@ CMakeUserPresets.json
 
 # Project specific files
 *.json
-configure
-configure.bat
+*.sh
+*.bat
 *#*#
 .#*

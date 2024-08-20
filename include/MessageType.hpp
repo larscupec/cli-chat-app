@@ -5,4 +5,5 @@ enum class MessageType {
   CLIENT_INFO,
   CHAT_MESSAGE,
   WELCOME_MESSAGE,
+  DISCONNECT_MESSAGE,
 };

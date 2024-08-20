@@ -14,6 +14,15 @@
 const std::string CLIENT_INFO_PATH = "./clientInfo.json";
 const std::string DEFAULT_USERNAME = "Guest";
 
+App *App::instance = nullptr;
+
+App *App::GetInstance() {
+  if (!instance) {
+    instance = new App();
+  }
+  return instance;
+}
+
 App::App() {
   // Read the 'clientInfo.json' file
   // if it does not exist create one
@@ -29,33 +38,30 @@ App::App() {
   std::string username = clientInfo.Read<std::string>("username");
 
   Debug::Log("Initializing the client...");
-  client = new Client(username);
+  Client::GetInstance()->SetUsername(username);
 
   Debug::Log("Initializing the console...");
-  console = new Console(this, client);
+  Console::GetInstance()->SetConsoleMode(CommandMode::GetInstance());
 
   Debug::Log("Done!");
 }
 
-App::~App() {
-  delete client;
-  delete console;
-}
-
 void App::Run() {
-  Debug::Log("Welcome " + client->GetUsername() + "!");
+  Debug::Log("Welcome " + Client::GetInstance()->GetUsername() + "!");
 
   isRunning = true;
 
-  ChatWindow::PrintLine("Welcome " + client->GetUsername() + "!");
+  ChatWindow::PrintLine("Welcome " + Client::GetInstance()->GetUsername() + "!");
   
   while (isRunning) {
-    console->ProcessInput();
+    Console::GetInstance()->ProcessInput();
   }
 }
 
 void App::Quit() {
   Debug::Log("Exiting clichatapp...");
   isRunning = false;
-  client->Disconnect();
+  if (Client::GetInstance()->GetIsConnected()) {
+    Client::GetInstance()->Disconnect();
+  }
 }

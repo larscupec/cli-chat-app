@@ -16,6 +16,7 @@ public:
   void PrintLine(std::string text);
   std::string ReadLine();
   void ClearLine();
+  void Clear();
 
   void ActivateColor(Color color);
   void DeactivateColor(Color color);
@@ -33,7 +34,6 @@ private:
 
   void DrawBorder();
   void DrawTitle();
-  void Clear();
 
   int GetContainerHeight() { return getmaxy(container); }
   int GetContainerWidth() { return getmaxx(container); }

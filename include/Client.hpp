@@ -10,8 +10,9 @@ class MessageHandler;
 class Client
 {
 public:
-  Client(std::string username);
   ~Client();
+
+  static Client *GetInstance();
 
   bool ConnectTo(std::string ip, int port);
   void Listen();
@@ -22,9 +23,14 @@ public:
   bool GetIsConnected() { return isConnected; }
   Color GetUserColor() { return userColor; }
 
+  void SetUsername(std::string username) { this->username = username; }
   void SetUserColor(Color userColor) { this->userColor = userColor; }
 
 private:
+  Client();
+
+  static Client *instance;
+  
   std::string username = "";
   Color userColor = Color::WHITE;
 

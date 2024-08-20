@@ -19,7 +19,6 @@ bool isServer = false;
 bool isHost = false;
 int serverPort = 1234;
 
-App *app = nullptr;
 Server *server = nullptr;
 
 int main(int argc, char **argv) {
@@ -88,15 +87,13 @@ int main(int argc, char **argv) {
       Debug::LogWarning("Your terminal doesn't support color");
     }
 
-    app = new App();
-
     if (isHost) {
       server = new Server(serverPort);
       std::thread *serverThread = new std::thread(&Server::Start, server);
       ThreadManager::Add(serverThread);
     }
 
-    app->Run();
+    App::GetInstance()->Run();
 
     if (server) {
       server->Stop();
@@ -107,6 +104,8 @@ int main(int argc, char **argv) {
   }
 
   ThreadManager::JoinAll();
+
+  endwin();
 
   return 0;
 }

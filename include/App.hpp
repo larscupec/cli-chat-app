@@ -1,19 +1,19 @@
 #pragma once
 
-class Client;
-class Console;
 
 class App {
 public:
-  App();
-  ~App();
+  ~App() {}
 
+  static App *GetInstance();
+  
   void Run();
   void Quit();
   
 private:
-  Client *client = nullptr;
-  Console *console = nullptr;
+  App();
 
+  static App *instance;
+  
   bool isRunning = false;
 };

@@ -7,13 +7,14 @@
 #include "Window.hpp"
 #include <ncurses/ncurses.h>
 
-Console::Console(App *app, Client *client) : app(app), client(client) {
-  // Note: The console starts in Command Mode
-  CommandMode *commandMode = new CommandMode(app, client, this);
-  SetConsoleMode(commandMode);
-}
+Console *Console::instance = nullptr;
 
-Console::~Console() { delete consoleMode; }
+Console *Console::GetInstance() {
+  if (!instance) {
+    instance = new Console();
+  }
+  return instance;
+}
 
 std::string Console::ReadInput() { return ConsoleWindow::ReadLine(); }
 
@@ -64,18 +65,16 @@ void Console::Edit() {
       break;
     case ('Q' & 0x1F): {
       // Ctrl+Q sets the console mode to Command Mode
-      CommandMode *commandMode = new CommandMode(app, client, this);
-      SetConsoleMode(commandMode);
+      SetConsoleMode(CommandMode::GetInstance());
       break;
     }
     case ('A' & 0x1F): {
       // Ctrl+A sets the console mode to Chat Mode
-      if (!client->GetIsConnected()) {
+      if (!Client::GetInstance()->GetIsConnected()) {
         Debug::Log("You must be connected to a server to enable Chat Mode");
         return;
       }
-      ChatMode *chatMode = new ChatMode(client);
-      SetConsoleMode(chatMode);
+      SetConsoleMode(ChatMode::GetInstance());
       break;
     }
     case KEY_HOME:
@@ -130,7 +129,6 @@ void Console::ProcessInput() {
 }
 
 void Console::SetConsoleMode(IConsoleMode *consoleMode) {
-  delete Console::consoleMode;
-  Console::consoleMode = consoleMode;
+  this->consoleMode = consoleMode;
   Debug::Log("Console Mode set to " + consoleMode->ToString());
 }

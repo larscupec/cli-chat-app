@@ -17,10 +17,9 @@ void ConnectCommand::Execute(std::vector<std::string> args) {
   std::string ip = args[0];
   int port = std::stoi(args[1]);
 
-  if (client->ConnectTo(ip, port)) {
-    std::thread *clientThread = new std::thread(&Client::Listen, client);
+  if (Client::GetInstance()->ConnectTo(ip, port)) {
+    std::thread *clientThread = new std::thread(&Client::Listen, Client::GetInstance());
     ThreadManager::Add(clientThread);
-    ChatMode *chatMode = new ChatMode(client);
-    console->SetConsoleMode(chatMode);
+    Console::GetInstance()->SetConsoleMode(ChatMode::GetInstance());
   }
 }

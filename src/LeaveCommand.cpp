@@ -5,7 +5,6 @@
 #include "Console.hpp"
 
 void LeaveCommand::Execute(std::vector<std::string> args) {
-  client->Disconnect();
-  CommandMode *commandMode = new CommandMode(app, client, console);
-  console->SetConsoleMode(commandMode);
+  Client::GetInstance()->Disconnect();
+  Console::GetInstance()->SetConsoleMode(CommandMode::GetInstance());
 }

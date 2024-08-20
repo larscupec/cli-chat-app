@@ -6,9 +6,6 @@
 #include "Debug.hpp"
 #include "Message.hpp"
 
-ServerChatHandler::ServerChatHandler(Server *server, Chat *chat)
-  : server(server), chat(chat) {}
-
 bool ServerChatHandler::HandleMessage(Message *message, ENetPeer *peer) {
   if (message->GetType() != MessageType::CHAT_MESSAGE) {
     return false;
@@ -16,7 +13,7 @@ bool ServerChatHandler::HandleMessage(Message *message, ENetPeer *peer) {
 
   ChatMessage *newChat = (ChatMessage*)message;
   
-  chat->Add(newChat);
+  server->GetChat()->Add(newChat);
 
   Debug::Log("Server: Received a chat message from " + newChat->GetSender() + ": " + newChat->GetContent());
 

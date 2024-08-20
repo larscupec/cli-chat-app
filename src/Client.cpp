@@ -1,10 +1,12 @@
 #include "Client.hpp"
 #include "ChatWindow.hpp"
 #include "ClientChatHandler.hpp"
+#include "ClientDisconnectHandler.hpp"
 #include "ClientInfoMessage.hpp"
 #include "ClientWelcomeHandler.hpp"
 #include "ClientWelcomeHandler.hpp"
 #include "Debug.hpp"
+#include "LeaveCommand.hpp"
 #include <enet/enet.h>
 #include <stdexcept>
 #include <string>
@@ -17,7 +19,16 @@ const unsigned int EVENT_TIMEOUT_MS = 1000;
 const unsigned int CONNECTION_TIMEOUT_MS = 5000;
 const unsigned int DISCONNECTION_TIMEOUT_MS = 3000;
 
-Client::Client(std::string username) : username(username) {
+Client *Client::instance = nullptr;
+
+Client *Client::GetInstance() {
+  if (!instance) {
+    instance = new Client();
+  }
+  return instance;
+}
+
+Client::Client() {
   Debug::Log("Creating an ENet host for the client...");
   client = enet_host_create(NULL, OUTGOING_CONNECTION_COUNT, MAX_CHANNELS, INCOMING_BANDWIDTH, OUTGOING_BANDWIDTH);
 
@@ -29,11 +40,15 @@ Client::Client(std::string username) : username(username) {
                              "host for the client.");
   }
 
-  ClientChatHandler *clientChatHandler = new ClientChatHandler();
-  ClientWelcomeHandler *clientWelcomeHandler = new ClientWelcomeHandler(this, clientChatHandler);
+  ClientChatHandler *chatHandler = new ClientChatHandler();
+  ClientWelcomeHandler *welcomeHandler = new ClientWelcomeHandler(chatHandler);
+  LeaveCommand *leaveCommand = new LeaveCommand();
+  ClientDisconnectHandler *disconnectHandler = new ClientDisconnectHandler(leaveCommand);
 
-  messageHandler = clientChatHandler;
-  clientChatHandler->SetNext(clientWelcomeHandler);
+  chatHandler->SetNext(welcomeHandler);
+  welcomeHandler->SetNext(disconnectHandler);
+
+  messageHandler = chatHandler;
 }
 
 Client::~Client() {

@@ -3,5 +3,5 @@
 #include "App.hpp"
 
 void ExitCommand::Execute(std::vector<std::string> args) {
-  app->Quit();
+  App::GetInstance()->Quit();
 }

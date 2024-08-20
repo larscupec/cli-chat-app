@@ -30,3 +30,10 @@ void ChatWindow::DeactivateColor(Color color) {
   }
   window->DeactivateColor(color);
 }
+
+void ChatWindow::Clear() {
+  if (!window) {
+    return;
+  }
+  window->Clear();
+}

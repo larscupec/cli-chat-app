@@ -2,13 +2,16 @@
 #include "ChatMessage.hpp"
 #include "ClientInfoMessage.hpp"
 #include "Color.hpp"
+#include "MessageType.hpp"
 #include "WelcomeMessage.hpp"
 #include "UnknownMessage.hpp"
+#include "DisconnectMessage.hpp"
 
 const std::string CLIENT_INFO_MESSAGE = "client-info";
 const std::string CHAT_MESSAGE = "chat-message";
 const std::string WELCOME_MESSAGE = "welcome-message";
 const std::string UNKNOWN_MESSAGE = "none";
+const std::string DISCONNECT_MESSAGE = "disconnect";
 
 Message *Message::Parse(json message) {
   std::string messageType = message["type"].get<std::string>();
@@ -30,6 +33,9 @@ Message *Message::Parse(json message) {
 
     return new WelcomeMessage(userColor, conversation);
   }
+  else if (messageType == DISCONNECT_MESSAGE) {
+    return new DisconnectMessage();
+  }
   else {
     return new UnknownMessage();
   }
@@ -45,5 +51,7 @@ std::string Message::GetTypeAsString() {
     return CHAT_MESSAGE;
   case MessageType::WELCOME_MESSAGE:
     return WELCOME_MESSAGE;
+  case MessageType::DISCONNECT_MESSAGE:
+    return DISCONNECT_MESSAGE;
   }
 }

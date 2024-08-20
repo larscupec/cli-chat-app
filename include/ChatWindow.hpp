@@ -13,6 +13,7 @@ public:
   static void Print(std::string message);
   static void ActivateColor(Color color);
   static void DeactivateColor(Color color);
+  static void Clear();
 
   static void SetWindow(Window *window) { ChatWindow::window = window; }
 

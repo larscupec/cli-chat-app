@@ -1,4 +1,5 @@
 #include "ChatMessage.hpp"
+#include "ChatWindow.hpp"
 #include "Client.hpp"
 #include "ClientWelcomeHandler.hpp"
 #include "Message.hpp"
@@ -13,9 +14,11 @@ bool ClientWelcomeHandler::HandleMessage(Message *message, ENetPeer *peer) {
 
   WelcomeMessage *welcomeMessage = (WelcomeMessage *)message;
 
-  client->SetUserColor(welcomeMessage->GetUserColor());
+  Client::GetInstance()->SetUserColor(welcomeMessage->GetUserColor());
 
   json conversation = json::parse(welcomeMessage->GetConversation());
+
+  ChatWindow::Clear();
 
   for (json::iterator it = conversation.begin(); it != conversation.end(); ++it) {
     Message *message = Message::Parse(*it);

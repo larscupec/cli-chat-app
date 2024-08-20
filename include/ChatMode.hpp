@@ -6,11 +6,14 @@ class Client;
 
 class ChatMode : public IConsoleMode {
 public:
-  ChatMode(Client *client) : client(client) {}
 
+  static ChatMode *GetInstance();
+  
   virtual void HandleInput(std::string input) override;
   virtual std::string ToString() override { return "Chat"; }
   
 private:
-  Client *client = nullptr;
+  ChatMode() {}
+
+  static ChatMode *instance;
 };

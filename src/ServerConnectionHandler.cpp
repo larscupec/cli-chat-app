@@ -7,9 +7,7 @@
 #include "User.hpp"
 #include <random>
 #include "Chat.hpp"
-
-ServerConnectionHandler::ServerConnectionHandler(Server *server, Chat *chat)
-  : server(server), chat(chat) {}
+#include "UserColorTable.hpp"
 
 bool ServerConnectionHandler::HandleMessage(Message *message, ENetPeer *peer) {
 
@@ -19,21 +17,36 @@ bool ServerConnectionHandler::HandleMessage(Message *message, ENetPeer *peer) {
 
   ClientInfoMessage *clientInfo = (ClientInfoMessage*)message;
 
-  std::random_device device;
-  std::mt19937 randomNumberGenerator(device());
-  std::uniform_int_distribution<std::mt19937::result_type> distribution(2, 7);
+  std::string username = clientInfo->GetUsername();
+  Color userColor = Color::BLACK;
 
-  Color userColor = (Color)distribution(randomNumberGenerator);
-  peer->data = new User(clientInfo->GetUsername(), userColor);
+  UserColorTable *userColorTable = server->GetUserColorTable();
+  Chat *chat = server->GetChat();
+  
+  if (userColorTable->HasColor(username)) {
+    userColor = userColorTable->GetColor(username);
+    Debug::Log("Server: " + username + " already has a color");
+  }
+  else {
+    Debug::Log("Server: Assigning a new color to the user: " + username);
+    std::random_device device;
+    std::mt19937 randomNumberGenerator(device());
+    std::uniform_int_distribution<std::mt19937::result_type> distribution(2, 7);
 
-  Debug::Log("Server: " + clientInfo->GetUsername() + " has joined the server.");
+    userColor = (Color)distribution(randomNumberGenerator);
+    userColorTable->Add(username, userColor);
+  }
+
+  peer->data = new User(username, userColor);
+
+  Debug::Log("Server: " + username + " has joined the server.");
 
   std::string conversation = chat->ToJson().dump();
   
   WelcomeMessage *welcomeMessage = new WelcomeMessage(userColor, conversation);
   server->SendTo(peer, welcomeMessage);
 
-  ChatMessage *newUserMessage = new ChatMessage("Server", SERVER_CHAT_COLOR, clientInfo->GetUsername() + " has joined the server.");
+  ChatMessage *newUserMessage = new ChatMessage("Server", SERVER_CHAT_COLOR, username + " has joined the server.");
   chat->Add(newUserMessage);
   server->Broadcast(newUserMessage);
 

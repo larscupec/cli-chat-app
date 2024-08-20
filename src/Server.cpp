@@ -2,11 +2,13 @@
 #include "Chat.hpp"
 #include "ChatMessage.hpp"
 #include "Debug.hpp"
+#include "DisconnectMessage.hpp"
 #include "JsonFileWriter.hpp"
 #include "Message.hpp"
 #include "ServerChatHandler.hpp"
 #include "ServerConnectionHandler.hpp"
 #include "User.hpp"
+#include "UserColorTable.hpp"
 #include "enet/enet.h"
 #include <stdexcept>
 #include <string>
@@ -33,10 +35,11 @@ Server::Server(int port) {
   }
 
   chat = new Chat();
+  userColorTable = new UserColorTable();
 
   ServerConnectionHandler *connectionHandler =
-    new ServerConnectionHandler(this, chat);
-  ServerChatHandler *chatMessageHandler = new ServerChatHandler(this, chat);
+    new ServerConnectionHandler(this);
+  ServerChatHandler *chatMessageHandler = new ServerChatHandler(this);
 
   messageHandler = connectionHandler;
   messageHandler->SetNext(chatMessageHandler);
@@ -84,6 +87,9 @@ void Server::Start() {
 	ChatMessage *userLeftMessage = new ChatMessage("Server", SERVER_CHAT_COLOR, user->GetUsername() + " has left the server.");
 	chat->Add(userLeftMessage);
 	Broadcast(userLeftMessage);
+	
+	delete (User*)event.peer->data;
+	event.peer->data = nullptr;
         break;
       }
       }
@@ -98,6 +104,9 @@ void Server::Stop() {
 
   Debug::Log("Stopping server...");
   isRunning = false;
+
+  DisconnectMessage disconnectMessage;
+  Broadcast(&disconnectMessage);
 }
 
 void Server::SendTo(ENetPeer *peer, Message *message) {
