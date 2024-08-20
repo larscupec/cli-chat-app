@@ -26,19 +26,19 @@ While using the cli-chat-app you will be interacting with it through a console a
 
 While In Chat Mode everything you type will be processed as a chat message and sent to the server. When in Command Mode you can execute commands. The **command list** is given below:
 
-#### Client commands:
+### Client commands:
 
  - `connect <ip> <port>`
 	 - Used for connecting to a server with the ip address `<ip>` on port `<port>`.
  - `leave`
 	 - Used for disconnecting from the server.
 
-#### Server commands:
+### Server commands:
 
 - `stop`
 	- Stops the server.
 
-#### General commands:
+### General commands:
 
  - `exit`
 	 - Closes the application.
