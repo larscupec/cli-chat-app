@@ -43,8 +43,6 @@ While In Chat Mode everything you type will be processed as a chat message and s
 
  - Add window scrolling
  - Add command history
- - Disconnect all peers when closing the server
- - Server UI
  - More server commands (kick, ban, unban, mute)
  - Closing and opening windows
 
