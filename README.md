@@ -43,6 +43,12 @@ While In Chat Mode everything you type will be processed as a chat message and s
  - `exit`
 	 - Closes the application.
 
+### Shortcuts
+
+There are also keyboard shortcuts for other functions, for example:
+
+ - `Ctrl+S` - Switches the focus on windows.
+
 ## Dependencies
 
  - NCurses (https://invisible-island.net/ncurses/)
