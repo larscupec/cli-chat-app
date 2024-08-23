@@ -29,7 +29,7 @@ While In Chat Mode everything you type will be processed as a chat message and s
 ### Client commands:
 
  - `connect <ip> <port>`
-	 - Used for connecting to a server with the ip address `<ip>` on port `<port>`.
+	 - Used for connecting to a server with the IP address `<ip>` on port `<port>`.
  - `leave`
 	 - Used for disconnecting from the server.
 
@@ -45,9 +45,9 @@ While In Chat Mode everything you type will be processed as a chat message and s
 
 ## Dependencies
 
-- NCurses (https://invisible-island.net/ncurses/)
-- ENet Reliable UDP networking library (http://enet.bespin.org/)
-- Niels Lohmann's JSON for Modern C++ (https://json.nlohmann.me/)
+ - NCurses (https://invisible-island.net/ncurses/)
+ - ENet Reliable UDP networking library (http://enet.bespin.org/)
+ - Niels Lohmann's JSON for Modern C++ (https://json.nlohmann.me/)
 
 ## TODO
 

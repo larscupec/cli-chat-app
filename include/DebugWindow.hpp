@@ -14,6 +14,7 @@ public:
   static void DeactivateColor(Color color);
 
   static void SetWindow(Window *window) { DebugWindow::window = window; }
+  static Window *GetWindow() { return window; }
 
 private:
   static Window *window;

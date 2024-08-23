@@ -13,6 +13,7 @@
 #include "ServerCommandMode.hpp"
 #include "ThreadManager.hpp"
 #include "Window.hpp"
+#include "WindowManager.hpp"
 #include <filesystem>
 #include <ncursesw/ncurses.h>
 #include <string>
@@ -66,6 +67,12 @@ void App::Run(bool isHost, bool isServer) {
     DebugWindow::SetWindow(debugWindow);
     ConsoleWindow::SetWindow(consoleWindow);
 
+    WindowManager::Add(chatWindow);
+    WindowManager::Add(debugWindow);
+    WindowManager::Add(consoleWindow);
+
+    chatWindow->SetHasFocus(true);
+
     if (!std::filesystem::exists(CLIENT_INFO_PATH)) {
       Debug::LogWarning(
           "'clientInfo.json' was not found, creating a new one...");
@@ -102,6 +109,11 @@ void App::Run(bool isHost, bool isServer) {
     DebugWindow::SetWindow(debugWindow);
     ConsoleWindow::SetWindow(consoleWindow);
 
+    WindowManager::Add(debugWindow);
+    WindowManager::Add(consoleWindow);
+
+    debugWindow->SetHasFocus(true);
+
     std::thread *serverThread =
         new std::thread(&Server::Start, Server::GetInstance(), DEFAULT_SERVER_PORT);
     ThreadManager::Add(serverThread);
@@ -125,4 +137,10 @@ void App::Quit() {
   if (Server::GetInstance()->GetIsRunning()) {
     Server::GetInstance()->Stop();
   }
+}
+
+App::~App() {
+  delete ChatWindow::GetWindow();
+  delete DebugWindow::GetWindow();
+  delete ConsoleWindow::GetWindow();
 }

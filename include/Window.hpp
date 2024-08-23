@@ -2,6 +2,7 @@
 
 #include <ncurses/ncurses.h>
 #include <string>
+#include <vector>
 #include "Color.hpp"
 
 class Window {
@@ -21,11 +22,15 @@ public:
   void ActivateColor(Color color);
   void DeactivateColor(Color color);
 
+  void Scroll(int numberOfLines);
+
   int GetCursorPositionX();
   int GetCursorPositionY();
   int GetPadHeight() { return getmaxy(pad); }
   int GetPadWidth() { return getmaxx(pad); }
   WINDOW *GetPad() { return pad; }
+
+  void SetHasFocus(bool state);
 
 private:
   WINDOW *parent = nullptr; // Pointer to the WindowManager's window
@@ -40,7 +45,13 @@ private:
 
   std::string title = "";
 
+  bool hasFocus = false;
+
   // Coordinates of the upper-left corner of the container within the parent window
   int positionX = 0;
   int positionY = 0;
+
+  std::vector<std::string> lines;
+  int firstLineIndex = 0;
+  int currentLineIndex = 0;
 };

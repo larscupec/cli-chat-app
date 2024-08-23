@@ -3,7 +3,7 @@
 
 class App {
 public:
-  ~App() {}
+  ~App();
 
   static App *GetInstance();
   

@@ -67,5 +67,7 @@ int main(int argc, char **argv) {
 
   endwin();
 
+  delete App::GetInstance();
+
   return 0;
 }

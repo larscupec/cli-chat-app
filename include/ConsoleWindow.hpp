@@ -15,7 +15,7 @@ public:
   static void ActivateColor(Color color);
   static void DeactivateColor(Color color);
   
-  static Window* GetWindow();
+  static Window* GetWindow() { return window; }
 
   static void SetWindow(Window *window) { ConsoleWindow::window = window; }
 

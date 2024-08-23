@@ -16,6 +16,7 @@ public:
   static void Clear();
 
   static void SetWindow(Window *window) { ChatWindow::window = window; }
+  static Window* GetWindow() { return window; }
 
 private:
   static Window *window;

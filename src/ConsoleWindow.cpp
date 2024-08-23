@@ -37,7 +37,3 @@ void ConsoleWindow::ClearLine() {
   }
   window->ClearLine();
 }
-
-Window *ConsoleWindow::GetWindow() {
-  return window;
-}

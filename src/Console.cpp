@@ -1,12 +1,13 @@
 #include "Console.hpp"
+#include "App.hpp"
 #include "ChatMode.hpp"
 #include "Client.hpp"
 #include "ClientCommandMode.hpp"
 #include "ConsoleWindow.hpp"
 #include "Debug.hpp"
 #include "Window.hpp"
+#include "WindowManager.hpp"
 #include <ncurses/ncurses.h>
-#include "App.hpp"
 
 Console *Console::instance = nullptr;
 
@@ -64,14 +65,13 @@ void Console::Edit() {
         lastCharacterPositionX--;
       }
       break;
-    case ('Q' & 0x1F): {
+    case ('Q' & 0x1F):
       // Ctrl+Q sets the console mode to Client Command Mode
       if (!App::GetInstance()->GetIsServer()) {
-	SetConsoleMode(ClientCommandMode::GetInstance());
+        SetConsoleMode(ClientCommandMode::GetInstance());
       }
       break;
-    }
-    case ('A' & 0x1F): {
+    case ('A' & 0x1F):
       // Ctrl+A sets the console mode to Chat Mode
       if (!Client::GetInstance()->GetIsConnected()) {
         Debug::Log("You must be connected to a server to enable Chat Mode");
@@ -79,7 +79,10 @@ void Console::Edit() {
       }
       SetConsoleMode(ChatMode::GetInstance());
       break;
-    }
+    case ('S' & 0x1F):
+      // Ctrl+S focuses next window
+      WindowManager::FocusNextWindow();
+      break;
     case KEY_HOME:
       wmove(pad, currentPositionY, 0);
       break;
@@ -88,6 +91,12 @@ void Console::Edit() {
       break;
     case '\n':
       mvwaddch(pad, currentPositionY, lastCharacterPositionX, '\n');
+      break;
+    case KEY_UP:
+      WindowManager::GetFocusedWindow()->Scroll(-1);
+      break;
+    case KEY_DOWN:
+      WindowManager::GetFocusedWindow()->Scroll(1);
       break;
     case KEY_PPAGE:
     case KEY_NPAGE:

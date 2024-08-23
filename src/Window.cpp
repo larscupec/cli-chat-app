@@ -22,6 +22,8 @@ Window::Window(WINDOW *parent, std::string title, int height, int width,
   wmove(pad, 0, 0);
 
   Refresh();
+
+  lines.push_back("");
 }
 
 Window::~Window() {
@@ -38,14 +40,28 @@ void Window::DeactivateColor(Color color) {
 }
 
 void Window::Print(std::string text) {
-  waddstr(pad, text.c_str());
-  Refresh();
+  if (currentLineIndex >= firstLineIndex &&
+      currentLineIndex <= firstLineIndex + GetPadHeight() - 1) {
+    waddstr(pad, text.c_str());
+    Refresh();
+  }
+  lines[currentLineIndex] += text;
 }
 
 void Window::PrintLine(std::string text) {
   Print(text);
-  waddch(pad, '\n');
-  Refresh();
+  if (currentLineIndex >= firstLineIndex &&
+      currentLineIndex <= firstLineIndex + GetPadHeight() - 1) {
+
+    if (GetCursorPositionY() == GetPadHeight() - 1) {
+      firstLineIndex++;
+    }
+    
+    waddch(pad, '\n');
+    Refresh();
+  }
+  lines.push_back("");
+  currentLineIndex++;
 }
 
 int Window::GetCursorPositionX() {
@@ -63,7 +79,7 @@ int Window::GetCursorPositionY() {
 std::string Window::ReadLine() {
   const int BUFFER_SIZE = GetPadWidth();
   char buffer[BUFFER_SIZE];
-  int ret = mvwinnstr(pad, GetCursorPositionY(), 0, buffer, BUFFER_SIZE - 1);
+  mvwinnstr(pad, GetCursorPositionY(), 0, buffer, BUFFER_SIZE - 1);
   return StringHelper::TrimString(buffer);
 }
 
@@ -84,8 +100,59 @@ void Window::Refresh() {
   doupdate();
 }
 
-void Window::DrawTitle() { mvwaddstr(container, 0, 1, this->title.c_str()); }
+void Window::DrawTitle() { mvwaddstr(container, 0, 1, title.c_str()); }
 
 void Window::DrawBorder() { box(container, 0, 0); }
 
 void Window::Clear() { wclear(pad); }
+
+void Window::SetHasFocus(bool state) {
+  hasFocus = state;
+
+  if (hasFocus) {
+    wattron(container, A_REVERSE);
+    DrawTitle();
+    wattroff(container, A_REVERSE);
+  } else {
+    DrawTitle();
+  }
+
+  Refresh();
+}
+
+void Window::Scroll(int numberOfLines) {
+  if (lines.size() < GetPadHeight()) {
+    return;
+  }
+
+  if (firstLineIndex == 0 && numberOfLines < 0) {
+    return;
+  }
+
+  if (numberOfLines > 0 &&
+      firstLineIndex + GetPadHeight() + numberOfLines > lines.size()) {
+    return;
+  }
+
+  firstLineIndex += numberOfLines;
+
+  wscrl(pad, numberOfLines);
+
+  int currentCursorPositionX = GetCursorPositionX();
+  int currentCursorPositionY = GetCursorPositionY();
+
+  if (numberOfLines < 0) {
+    for (int i = 0; i < abs(numberOfLines); i++) {
+      mvwaddstr(pad, i, 0, lines[firstLineIndex + i].c_str());
+    }
+  } else {
+    for (int i = 0; i < numberOfLines; i++) {
+      mvwaddstr(pad, GetPadHeight() - 1, 0,
+                lines[firstLineIndex + GetPadHeight() - 1 - i].c_str());
+    }
+  }
+
+  wmove(pad, currentCursorPositionY, currentCursorPositionX);
+
+  Refresh();
+}
