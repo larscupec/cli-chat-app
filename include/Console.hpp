@@ -2,6 +2,7 @@
 
 #include "IConsoleMode.hpp"
 #include <string>
+#include <vector>
 
 class Console {
 public:
@@ -23,4 +24,6 @@ private:
   std::string ReadInput();
   void ClearInput();
   void Edit();
+
+  std::vector<std::string> previousInput;
 };

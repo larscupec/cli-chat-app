@@ -31,9 +31,9 @@ std::string ConsoleWindow::ReadLine() {
   return window->ReadLine();
 }
 
-void ConsoleWindow::ClearLine() {
+void ConsoleWindow::Clear() {
   if (!window) {
     return;
   }
-  window->ClearLine();
+  window->Clear();
 }

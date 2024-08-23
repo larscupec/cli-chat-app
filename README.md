@@ -57,7 +57,6 @@ There are also keyboard shortcuts for other functions, for example:
 
 ## TODO
 
- - Add command history
  - More server commands (kick, ban, unban, mute)
  - Closing and opening windows
 

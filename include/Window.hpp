@@ -16,7 +16,6 @@ public:
   void Print(std::string text);
   void PrintLine(std::string text);
   std::string ReadLine();
-  void ClearLine();
   void Clear();
 
   void ActivateColor(Color color);

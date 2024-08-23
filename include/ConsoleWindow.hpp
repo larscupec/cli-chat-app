@@ -11,7 +11,7 @@ public:
 
   static void PrintLine(std::string message);
   static std::string ReadLine();
-  static void ClearLine();
+  static void Clear();
   static void ActivateColor(Color color);
   static void DeactivateColor(Color color);
   

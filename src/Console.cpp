@@ -20,24 +20,24 @@ Console *Console::GetInstance() {
 
 std::string Console::ReadInput() { return ConsoleWindow::ReadLine(); }
 
-void Console::ClearInput() { ConsoleWindow::ClearLine(); }
+void Console::ClearInput() { ConsoleWindow::Clear(); }
 
 void Console::Edit() {
   const int leftmostCursorPositionX = 0;
 
   Window *consoleWindow = ConsoleWindow::GetWindow();
-  WINDOW *pad = consoleWindow->GetPad();
+  WINDOW *consolePad = consoleWindow->GetPad();
 
-  keypad(pad, true);
+  keypad(consolePad, true);
   noecho();
-  scrollok(pad, false);
+  scrollok(consolePad, false);
 
   int lastCharacterPositionX = leftmostCursorPositionX;
-
+  int previousInputIndex = previousInput.size() - 1;
   int character;
 
   do {
-    character = wgetch(pad);
+    character = wgetch(consolePad);
 
     int currentPositionX = consoleWindow->GetCursorPositionX();
     int currentPositionY = consoleWindow->GetCursorPositionY();
@@ -45,23 +45,23 @@ void Console::Edit() {
     switch (character) {
     case KEY_LEFT:
       if (currentPositionX > leftmostCursorPositionX) {
-        wmove(pad, currentPositionY, currentPositionX - 1);
+        wmove(consolePad, currentPositionY, currentPositionX - 1);
       }
       break;
     case KEY_RIGHT:
       if (currentPositionX < lastCharacterPositionX) {
-        wmove(pad, currentPositionY, currentPositionX + 1);
+        wmove(consolePad, currentPositionY, currentPositionX + 1);
       }
       break;
     case KEY_BACKSPACE:
       if (currentPositionX > leftmostCursorPositionX) {
-        mvwdelch(pad, currentPositionY, currentPositionX - 1);
+        mvwdelch(consolePad, currentPositionY, currentPositionX - 1);
         lastCharacterPositionX--;
       }
       break;
     case KEY_DC:
       if (currentPositionX < lastCharacterPositionX) {
-        wdelch(pad);
+        wdelch(consolePad);
         lastCharacterPositionX--;
       }
       break;
@@ -84,19 +84,44 @@ void Console::Edit() {
       WindowManager::FocusNextWindow();
       break;
     case KEY_HOME:
-      wmove(pad, currentPositionY, 0);
+      wmove(consolePad, currentPositionY, 0);
       break;
     case KEY_END:
-      wmove(pad, currentPositionY, lastCharacterPositionX);
+      wmove(consolePad, currentPositionY, lastCharacterPositionX);
       break;
     case '\n':
-      mvwaddch(pad, currentPositionY, lastCharacterPositionX, '\n');
+      mvwaddch(consolePad, currentPositionY, lastCharacterPositionX, '\n');
       break;
     case KEY_UP:
-      WindowManager::GetFocusedWindow()->Scroll(-1);
+      if (WindowManager::GetFocusedWindow()->GetPad() == consolePad &&
+          previousInputIndex >= 0) {
+        consoleWindow->Clear();
+        consoleWindow->Print(previousInput[previousInputIndex]);
+	lastCharacterPositionX = previousInput[previousInputIndex].size();
+	previousInputIndex--;
+	if (previousInputIndex < 0) {
+	  previousInputIndex = 0;
+	}
+      } else {
+        WindowManager::GetFocusedWindow()->Scroll(-1);
+      }
       break;
     case KEY_DOWN:
-      WindowManager::GetFocusedWindow()->Scroll(1);
+      if (WindowManager::GetFocusedWindow()->GetPad() == consolePad &&
+          previousInputIndex < previousInput.size()) {
+        consoleWindow->Clear();
+	previousInputIndex++;
+	if (previousInputIndex > previousInput.size() - 1) {
+	  previousInputIndex = previousInput.size() - 1;
+	  consoleWindow->Clear();
+	  break;
+	}
+	consoleWindow->Print(previousInput[previousInputIndex]);
+	lastCharacterPositionX = previousInput[previousInputIndex].size();
+      }
+      else {
+        WindowManager::GetFocusedWindow()->Scroll(1);
+      }
       break;
     case KEY_PPAGE:
     case KEY_NPAGE:
@@ -117,8 +142,8 @@ void Console::Edit() {
     case KEY_F(12):
       break;
     default:
-      winsch(pad, character);
-      wmove(pad, currentPositionY, currentPositionX + 1);
+      winsch(consolePad, character);
+      wmove(consolePad, currentPositionY, currentPositionX + 1);
       if (consoleWindow->GetCursorPositionX() > lastCharacterPositionX) {
         lastCharacterPositionX = currentPositionX + 1;
       } else {
@@ -133,6 +158,7 @@ void Console::Edit() {
 void Console::ProcessInput() {
   Edit();
   std::string input = ReadInput();
+  previousInput.push_back(input);
   ClearInput();
   if (input.size() == 0) {
     return;

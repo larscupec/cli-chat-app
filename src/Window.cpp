@@ -56,7 +56,7 @@ void Window::PrintLine(std::string text) {
     if (GetCursorPositionY() == GetPadHeight() - 1) {
       firstLineIndex++;
     }
-    
+
     waddch(pad, '\n');
     Refresh();
   }
@@ -83,12 +83,6 @@ std::string Window::ReadLine() {
   return StringHelper::TrimString(buffer);
 }
 
-void Window::ClearLine() {
-  wmove(pad, GetCursorPositionY(), 0);
-  wclrtoeol(pad);
-  Refresh();
-}
-
 void Window::Refresh() {
   pnoutrefresh(container, 0, 0, positionY, positionX,
                positionY + GetContainerHeight(),
@@ -104,7 +98,11 @@ void Window::DrawTitle() { mvwaddstr(container, 0, 1, title.c_str()); }
 
 void Window::DrawBorder() { box(container, 0, 0); }
 
-void Window::Clear() { wclear(pad); }
+void Window::Clear() {
+  wclear(pad);
+  lines.clear();
+  Refresh();
+}
 
 void Window::SetHasFocus(bool state) {
   hasFocus = state;
