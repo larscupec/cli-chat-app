@@ -20,4 +20,4 @@ if (WIN32)
    target_link_directories(${PROJECT_NAME} PUBLIC C:/msys64/ucrt64/lib)
 endif (WIN32)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC ncursesw enet)
+target_link_libraries(${PROJECT_NAME} PUBLIC ncursesw enet -static-libstdc++)
