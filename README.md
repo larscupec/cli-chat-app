@@ -51,7 +51,6 @@ While In Chat Mode everything you type will be processed as a chat message and s
 
 ## TODO
 
- - Add window scrolling
  - Add command history
  - More server commands (kick, ban, unban, mute)
  - Closing and opening windows
