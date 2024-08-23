@@ -50,6 +50,7 @@ void Window::Print(std::string text) {
 
 void Window::PrintLine(std::string text) {
   Print(text);
+  
   if (currentLineIndex >= firstLineIndex &&
       currentLineIndex <= firstLineIndex + GetPadHeight() - 1) {
 
@@ -101,6 +102,9 @@ void Window::DrawBorder() { box(container, 0, 0); }
 void Window::Clear() {
   wclear(pad);
   lines.clear();
+  lines.push_back("");
+  firstLineIndex = 0;
+  currentLineIndex = 0;
   Refresh();
 }
 

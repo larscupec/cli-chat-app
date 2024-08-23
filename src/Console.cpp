@@ -91,6 +91,7 @@ void Console::Edit() {
       break;
     case '\n':
       mvwaddch(consolePad, currentPositionY, lastCharacterPositionX, '\n');
+      previousInputIndex = previousInput.size() - 1;
       break;
     case KEY_UP:
       if (WindowManager::GetFocusedWindow()->GetPad() == consolePad &&
@@ -113,7 +114,6 @@ void Console::Edit() {
 	previousInputIndex++;
 	if (previousInputIndex > previousInput.size() - 1) {
 	  previousInputIndex = previousInput.size() - 1;
-	  consoleWindow->Clear();
 	  break;
 	}
 	consoleWindow->Print(previousInput[previousInputIndex]);
