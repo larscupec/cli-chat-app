@@ -126,7 +126,7 @@ void Server::Stop() {
   JsonFileWriter conversationFile("./conversation.json");
   conversationFile.Write(chat->ToJson());
 
-  DisconnectMessage disconnectMessage;
+  DisconnectMessage disconnectMessage("Server shut down");
   Broadcast(&disconnectMessage);
   enet_host_flush(server);
   

@@ -34,7 +34,9 @@ Message *Message::Parse(json message) {
     return new WelcomeMessage(userColor, conversation);
   }
   else if (messageType == DISCONNECT_MESSAGE) {
-    return new DisconnectMessage();
+    std::string reason = message["reason"].get<std::string>();
+
+    return new DisconnectMessage(reason);
   }
   else {
     return new UnknownMessage();
