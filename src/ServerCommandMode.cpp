@@ -1,6 +1,7 @@
 #include "ServerCommandMode.hpp"
 #include "CommandList.hpp"
 #include "Debug.hpp"
+#include "KickCommand.hpp"
 #include "StopServerCommand.hpp"
 #include "StringHelper.hpp"
 #include <vector>
@@ -28,6 +29,10 @@ void ServerCommandMode::HandleInput(std::string input) {
   else if (command == COMMAND_EXIT) {
     ExitCommand exit;
     exit.Execute(args);
+  }
+  else if (command == COMMAND_KICK) {
+    KickCommand kick;
+    kick.Execute(args);
   }
   else {
     Debug::Log("Unknown command '" + command + "'");

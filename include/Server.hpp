@@ -1,14 +1,15 @@
 #pragma once
 
 #include <enet/enet.h>
+#include <string>
 
 class MessageHandler;
 class Chat;
 class Message;
 class UserColorTable;
+class User;
 
-class Server
-{
+class Server {
 public:
   ~Server();
 
@@ -23,12 +24,13 @@ public:
   Chat *GetChat() { return chat; }
   UserColorTable *GetUserColorTable() { return userColorTable; }
   bool GetIsRunning() { return isRunning; }
+  ENetPeer *GetUserPeer(std::string username);
 
 private:
   Server();
 
   static Server *instance;
-  
+
   ENetHost *server = nullptr;
 
   MessageHandler *messageHandler = nullptr;
@@ -36,4 +38,4 @@ private:
   UserColorTable *userColorTable = nullptr;
 
   bool isRunning = false;
-};    
+};

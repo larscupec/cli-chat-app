@@ -11,3 +11,4 @@ const std::string COMMAND_LEAVE = "leave";
 // Server commands:
 
 const std::string COMMAND_STOP = "stop";
+const std::string COMMAND_KICK = "kick";

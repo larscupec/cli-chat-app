@@ -149,3 +149,13 @@ void Server::Broadcast(Message *message) {
                                           ENET_PACKET_FLAG_RELIABLE);
   enet_host_broadcast(server, 0, packet);
 }
+
+ENetPeer *Server::GetUserPeer(std::string username) {
+  for (int i = 0; i < server->connectedPeers; i++) {
+    User *user = (User*)server->peers[i].data;
+    if (user->GetUsername() == username) {
+      return &server->peers[i];
+    }
+  }
+  return nullptr;
+}
