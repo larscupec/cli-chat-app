@@ -57,7 +57,8 @@ There are also keyboard shortcuts for other functions, for example:
 
 ## TODO
 
- - More server commands (kick, ban, unban, mute)
+ - Fix window scrolling
+ - More server commands (ban, unban, mute)
  - Closing and opening windows
 
 ## Disclaimer
