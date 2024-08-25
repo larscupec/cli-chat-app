@@ -37,6 +37,8 @@ While In Chat Mode everything you type will be processed as a chat message and s
 
 - `stop`
 	- Stops the server.
+- `kick <username>`
+	- Disconnects a peer with the specified username from the server.
 
 ### General commands:
 
@@ -57,7 +59,6 @@ There are also keyboard shortcuts for other functions, for example:
 
 ## TODO
 
- - Fix window scrolling
  - More server commands (ban, unban, mute)
  - Closing and opening windows
 

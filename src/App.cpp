@@ -142,4 +142,5 @@ void App::Quit() {
 App::~App() {
   delete ChatWindow::GetWindow();
   delete DebugWindow::GetWindow();
-  delete ConsoleWindow::GetWindow();}
+  delete ConsoleWindow::GetWindow();
+}

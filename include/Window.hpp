@@ -23,6 +23,8 @@ public:
 
   void Scroll(int numberOfLines);
 
+  bool IsCurrentLineOnScreen();
+
   int GetCursorPositionX();
   int GetCursorPositionY();
   int GetPadHeight() { return getmaxy(pad); }

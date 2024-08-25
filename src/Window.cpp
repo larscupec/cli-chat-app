@@ -4,9 +4,11 @@
 #include <cstdlib>
 #include <ncurses/ncurses.h>
 #include <string>
+#include <cmath>
 
 Window::Window(WINDOW *parent, std::string title, int height, int width,
-               int positionY, int positionX) {
+               int positionY, int positionX)
+{
   this->parent = parent;
   this->title = title;
   this->positionX = positionX;
@@ -26,65 +28,84 @@ Window::Window(WINDOW *parent, std::string title, int height, int width,
   lines.push_back("");
 }
 
-Window::~Window() {
+Window::~Window()
+{
   delwin(pad);
   delwin(container);
 }
 
-void Window::ActivateColor(Color color) {
+void Window::ActivateColor(Color color)
+{
   wattron(pad, COLOR_PAIR((int)color));
 }
 
-void Window::DeactivateColor(Color color) {
+void Window::DeactivateColor(Color color)
+{
   wattroff(pad, COLOR_PAIR((int)color));
 }
 
-void Window::Print(std::string text) {
-  if (currentLineIndex >= firstLineIndex &&
-      currentLineIndex <= firstLineIndex + GetPadHeight() - 1) {
-    waddstr(pad, text.c_str());
-    Refresh();
-  }
-  lines[currentLineIndex] += text;
-}
+void Window::Print(std::string text)
+{
+  size_t neededNumberOfLines = ceil(text.size() / (double)GetPadWidth());
 
-void Window::PrintLine(std::string text) {
-  Print(text);
-  
-  if (currentLineIndex >= firstLineIndex &&
-      currentLineIndex <= firstLineIndex + GetPadHeight() - 1) {
-
-    if (GetCursorPositionY() == GetPadHeight() - 1) {
-      firstLineIndex++;
+  size_t startPos = 0;
+  for (size_t i = 0; i < neededNumberOfLines; i++)
+  {
+    if (i > 0)
+    {
+      lines.push_back("");
+      currentLineIndex++;
     }
 
-    waddch(pad, '\n');
-    Refresh();
+    std::string line = text.substr(startPos, GetPadWidth());
+    lines[currentLineIndex] += line;
+    startPos += line.size();
+
+    if (IsCurrentLineOnScreen())
+    {
+      if (GetCursorPositionY() == GetPadHeight() - 1 && (line.back() == '\n' || line.size() == GetPadWidth()))
+      {
+        firstLineIndex++;
+      }
+      waddstr(pad, line.c_str());
+    }
   }
+
+  Refresh();
+}
+
+void Window::PrintLine(std::string text)
+{
+  Print(text + "\n");
+
   lines.push_back("");
   currentLineIndex++;
 }
 
-int Window::GetCursorPositionX() {
+int Window::GetCursorPositionX()
+{
   int cursorPositionX, cursorPositionY;
   getyx(pad, cursorPositionY, cursorPositionX);
   return cursorPositionX;
 }
 
-int Window::GetCursorPositionY() {
+int Window::GetCursorPositionY()
+{
   int cursorPositionX, cursorPositionY;
   getyx(pad, cursorPositionY, cursorPositionX);
   return cursorPositionY;
 }
 
-std::string Window::ReadLine() {
+std::string Window::ReadLine()
+{
   const int BUFFER_SIZE = GetPadWidth();
   char buffer[BUFFER_SIZE];
   mvwinnstr(pad, GetCursorPositionY(), 0, buffer, BUFFER_SIZE - 1);
   return StringHelper::TrimString(buffer);
 }
 
-void Window::Refresh() {
+void Window::Refresh()
+{
   pnoutrefresh(container, 0, 0, positionY, positionX,
                positionY + GetContainerHeight(),
                positionX + GetContainerWidth());
@@ -99,62 +120,64 @@ void Window::DrawTitle() { mvwaddstr(container, 0, 1, title.c_str()); }
 
 void Window::DrawBorder() { box(container, 0, 0); }
 
-void Window::Clear() {
-  wclear(pad);
+void Window::Clear()
+{
   lines.clear();
   lines.push_back("");
   firstLineIndex = 0;
   currentLineIndex = 0;
+  wclear(pad);
   Refresh();
 }
 
-void Window::SetHasFocus(bool state) {
+void Window::SetHasFocus(bool state)
+{
   hasFocus = state;
 
-  if (hasFocus) {
+  if (hasFocus)
+  {
     wattron(container, A_REVERSE);
     DrawTitle();
     wattroff(container, A_REVERSE);
-  } else {
+  }
+  else
+  {
     DrawTitle();
   }
 
   Refresh();
 }
 
-void Window::Scroll(int numberOfLines) {
-  if (lines.size() < GetPadHeight()) {
-    return;
-  }
-
-  if (firstLineIndex == 0 && numberOfLines < 0) {
-    return;
-  }
-
-  if (numberOfLines > 0 &&
-      firstLineIndex + GetPadHeight() + numberOfLines > lines.size()) {
+// This is evil!
+void Window::Scroll(int numberOfLines)
+{
+  if (numberOfLines == 0)
+  {
     return;
   }
 
   firstLineIndex += numberOfLines;
 
-  wscrl(pad, numberOfLines);
+  wclear(pad);
+  wmove(pad, 0, 0);
 
-  int currentCursorPositionX = GetCursorPositionX();
-  int currentCursorPositionY = GetCursorPositionY();
-
-  if (numberOfLines < 0) {
-    for (int i = 0; i < abs(numberOfLines); i++) {
-      mvwaddstr(pad, i, 0, lines[firstLineIndex + i].c_str());
+  for (int i = firstLineIndex; i < std::min(firstLineIndex + GetPadHeight(), (int)lines.size()); i++)
+  {
+    if (i < 0)
+    {
+      waddstr(pad, "~\n");
     }
-  } else {
-    for (int i = 0; i < numberOfLines; i++) {
-      mvwaddstr(pad, GetPadHeight() - 1, 0,
-                lines[firstLineIndex + GetPadHeight() - 1 - i].c_str());
+    else
+    {
+      waddstr(pad, lines[i].c_str());
     }
   }
 
-  wmove(pad, currentCursorPositionY, currentCursorPositionX);
-
   Refresh();
+}
+
+bool Window::IsCurrentLineOnScreen()
+{
+  return currentLineIndex >= firstLineIndex &&
+         currentLineIndex <= firstLineIndex + GetPadHeight() - 1;
 }

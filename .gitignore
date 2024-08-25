@@ -1,6 +1,7 @@
 build/
 lib/
 .cache/
+.vscode/
 
 # Prerequisites
 *.d
@@ -53,5 +54,3 @@ CMakeUserPresets.json
 *.json
 *.sh
 *.bat
-*#*#
-.#*
