@@ -7,6 +7,7 @@
 const std::string COMMAND_CONNECT = "connect";
 const std::string COMMAND_EXIT = "exit";
 const std::string COMMAND_LEAVE = "leave";
+const std::string COMMAND_OPEN_WINDOW = "open";
 
 // Server commands:
 

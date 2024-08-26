@@ -21,7 +21,6 @@
 
 const std::string CLIENT_INFO_PATH = "./clientInfo.json";
 const std::string DEFAULT_USERNAME = "Guest";
-const int CONSOLE_HEIGHT = 3;
 const int DEFAULT_SERVER_PORT = 1234;
 
 App *App::instance = nullptr;

@@ -83,6 +83,14 @@ void Console::Edit() {
       // Ctrl+S focuses next window
       WindowManager::FocusNextWindow();
       break;
+    case ('R' & 0x1F):
+      // Ctrl+R redraws the focused window
+      WindowManager::GetFocusedWindow()->Redraw();
+      break;
+    case ('X' & 0x1F):
+      // Ctrl+X closes the focused window
+      WindowManager::CloseFocusedWindow();
+      break;
     case KEY_HOME:
       wmove(consolePad, currentPositionY, 0);
       break;

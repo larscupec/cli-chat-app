@@ -11,8 +11,6 @@ Window::Window(WINDOW *parent, std::string title, int height, int width,
 {
   this->parent = parent;
   this->title = title;
-  this->positionX = positionX;
-  this->positionY = positionY;
 
   container = subpad(parent, height, width, positionY, positionX);
   pad = subpad(container, height - 2, width - 2, 1, 1);
@@ -26,6 +24,7 @@ Window::Window(WINDOW *parent, std::string title, int height, int width,
   Refresh();
 
   lines.push_back("");
+  isOpen = true;
 }
 
 Window::~Window()
@@ -61,17 +60,16 @@ void Window::Print(std::string text)
     lines[currentLineIndex] += line;
     startPos += line.size();
 
-    if (IsCurrentLineOnScreen())
+    if (IsCurrentLineOnScreen() && isOpen)
     {
       if (GetCursorPositionY() == GetPadHeight() - 1 && (line.back() == '\n' || line.size() == GetPadWidth()))
       {
         firstLineIndex++;
       }
       waddstr(pad, line.c_str());
+      Refresh();
     }
   }
-
-  Refresh();
 }
 
 void Window::PrintLine(std::string text)
@@ -106,17 +104,25 @@ std::string Window::ReadLine()
 
 void Window::Refresh()
 {
-  pnoutrefresh(container, 0, 0, positionY, positionX,
-               positionY + GetContainerHeight(),
-               positionX + GetContainerWidth());
+  pnoutrefresh(container, 0, 0, GetContainerBeginY(), GetContainerBeginX(),
+               GetContainerBeginY() + GetContainerHeight(),
+               GetContainerBeginX() + GetContainerWidth());
 
-  pnoutrefresh(pad, 0, 0, positionY + 1, positionX + 1,
-               positionY + GetPadHeight(), positionX + GetPadWidth());
+  pnoutrefresh(pad, 0, 0, GetContainerBeginY() + 1, GetContainerBeginX() + 1,
+               GetContainerBeginY() + GetPadHeight(), GetContainerBeginX() + GetPadWidth());
 
   doupdate();
 }
 
-void Window::DrawTitle() { mvwaddstr(container, 0, 1, title.c_str()); }
+void Window::DrawTitle()
+{
+  if (hasFocus)
+  {
+    wattron(container, A_REVERSE);
+  }
+  mvwaddstr(container, 0, 1, title.c_str());
+  wattroff(container, A_REVERSE);
+}
 
 void Window::DrawBorder() { box(container, 0, 0); }
 
@@ -134,13 +140,7 @@ void Window::SetHasFocus(bool state)
 {
   hasFocus = state;
 
-  if (hasFocus)
-  {
-    wattron(container, A_REVERSE);
-    DrawTitle();
-    wattroff(container, A_REVERSE);
-  }
-  else
+  if (isOpen)
   {
     DrawTitle();
   }
@@ -148,7 +148,6 @@ void Window::SetHasFocus(bool state)
   Refresh();
 }
 
-// This is evil!
 void Window::Scroll(int numberOfLines)
 {
   if (numberOfLines == 0)
@@ -159,6 +158,51 @@ void Window::Scroll(int numberOfLines)
   firstLineIndex += numberOfLines;
 
   wclear(pad);
+
+  DrawPad();
+
+  Refresh();
+}
+
+bool Window::IsCurrentLineOnScreen()
+{
+  return currentLineIndex >= firstLineIndex &&
+         currentLineIndex <= firstLineIndex + GetPadHeight() - 1;
+}
+
+void Window::SetIsOpen(bool state)
+{
+  isOpen = state;
+
+  if (isOpen)
+  {
+    Redraw();
+  }
+  else
+  {
+    wclear(container);
+    Refresh();
+  }
+}
+
+void Window::Redraw()
+{
+  int currentCursorPositionX = GetCursorPositionX();
+  int currentCursorPositionY = GetCursorPositionY();
+
+  wclear(container);
+
+  DrawBorder();
+  DrawTitle();
+  DrawPad();
+
+  wmove(pad, currentCursorPositionY, currentCursorPositionX);
+
+  Refresh();
+}
+
+void Window::DrawPad()
+{
   wmove(pad, 0, 0);
 
   for (int i = firstLineIndex; i < std::min(firstLineIndex + GetPadHeight(), (int)lines.size()); i++)
@@ -172,12 +216,34 @@ void Window::Scroll(int numberOfLines)
       waddstr(pad, lines[i].c_str());
     }
   }
-
-  Refresh();
 }
 
-bool Window::IsCurrentLineOnScreen()
+void Window::Resize(int newWidth, int newHeight)
 {
-  return currentLineIndex >= firstLineIndex &&
-         currentLineIndex <= firstLineIndex + GetPadHeight() - 1;
+  if (newWidth <= 0 || newHeight <= 0)
+  {
+    return;
+  }
+
+  wresize(container, newHeight, newWidth);
+  Redraw();
+}
+
+void Window::Move(int positionX, int positionY)
+{
+  int currentCursorPositionX = GetCursorPositionX();
+  int currentCursorPositionY = GetCursorPositionY();
+  int width = GetContainerWidth();
+  int height = GetContainerHeight();
+
+  delwin(pad);
+  delwin(container);
+
+  container = subpad(parent, height, width, positionY, positionX);
+  pad = subpad(container, height - 2, width - 2, 1, 1);
+
+  scrollok(pad, true);
+
+  wmove(pad, currentCursorPositionY, currentCursorPositionX);
+  Redraw();
 }

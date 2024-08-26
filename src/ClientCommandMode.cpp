@@ -7,6 +7,7 @@
 #include "StringHelper.hpp"
 #include <ncurses/ncurses.h>
 #include <vector>
+#include "OpenWindowCommand.hpp"
 
 ClientCommandMode *ClientCommandMode::instance = nullptr;
 
@@ -32,6 +33,9 @@ void ClientCommandMode::HandleInput(std::string input) {
   } else if (command == COMMAND_LEAVE) {
     LeaveCommand leave;
     leave.Execute(args);
+  } else if (command == COMMAND_OPEN_WINDOW) {
+    OpenWindowCommand openWindow;
+    openWindow.Execute(args);
   } else {
     Debug::Log("Unknown command '" + command + "'");
   }

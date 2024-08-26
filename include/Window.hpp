@@ -17,11 +17,12 @@ public:
   void PrintLine(std::string text);
   std::string ReadLine();
   void Clear();
-
+  void Redraw();
   void ActivateColor(Color color);
   void DeactivateColor(Color color);
-
   void Scroll(int numberOfLines);
+  void Resize(int newWidth, int newHeight);
+  void Move(int positionX, int positionY);
 
   bool IsCurrentLineOnScreen();
 
@@ -30,8 +31,11 @@ public:
   int GetPadHeight() { return getmaxy(pad); }
   int GetPadWidth() { return getmaxx(pad); }
   WINDOW *GetPad() { return pad; }
+  bool GetIsOpen() { return isOpen; }
+  std::string GetTitle() { return title; }
 
   void SetHasFocus(bool state);
+  void SetIsOpen(bool state);
 
 private:
   WINDOW *parent = nullptr; // Pointer to the WindowManager's window
@@ -40,17 +44,17 @@ private:
 
   void DrawBorder();
   void DrawTitle();
+  void DrawPad();
 
   int GetContainerHeight() { return getmaxy(container); }
   int GetContainerWidth() { return getmaxx(container); }
+  int GetContainerBeginX() { return getbegx(container); }
+  int GetContainerBeginY() { return getbegy(container); }
 
   std::string title = "";
 
   bool hasFocus = false;
-
-  // Coordinates of the upper-left corner of the container within the parent window
-  int positionX = 0;
-  int positionY = 0;
+  bool isOpen = false;
 
   std::vector<std::string> lines;
   int firstLineIndex = 0;

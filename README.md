@@ -35,21 +35,25 @@ While In Chat Mode everything you type will be processed as a chat message and s
 
 ### Server commands:
 
-- `stop`
-	- Stops the server.
-- `kick <username>`
-	- Disconnects a peer with the specified username from the server.
+ - `stop`
+	 - Stops the server.
+ - `kick <username>`
+	 - Disconnects a peer with the specified username from the server.
 
 ### General commands:
 
  - `exit`
 	 - Closes the application.
+ - `open <window>`
+	 - Opens the window with the title `<window>`.
 
 ### Shortcuts
 
 There are also keyboard shortcuts for other functions, for example:
 
- - `Ctrl+S` - Switches the focus on windows.
+ - `Ctrl+S` - Switches the focus on windows. The focused window has a highlighted title.
+ - `Ctrl+X` - Closes the focused window.
+ - `Ctrl+R` - Redraws the focused window.
 
 ## Dependencies
 
@@ -59,8 +63,9 @@ There are also keyboard shortcuts for other functions, for example:
 
 ## TODO
 
- - More server commands (ban, unban, mute)
- - Closing and opening windows
+ - More server commands (ban, unban, mute, unmute)
+ - Control the server through the client
+ - Retain text color when scrolling
 
 ## Disclaimer
 
