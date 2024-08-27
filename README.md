@@ -65,7 +65,6 @@ There are also keyboard shortcuts for other functions, for example:
 
  - More server commands (ban, unban, mute, unmute)
  - Control the server through the client
- - Retain text color when scrolling
 
 ## Disclaimer
 

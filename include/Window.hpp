@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "Color.hpp"
+#include "ChTypeString.hpp"
 
 class Window {
 public:
@@ -56,7 +57,9 @@ private:
   bool hasFocus = false;
   bool isOpen = false;
 
-  std::vector<std::string> lines;
+  std::vector<ChTypeString*> lines;
   int firstLineIndex = 0;
   int currentLineIndex = 0;
+
+  Color activeColor = Color::WHITE;
 };

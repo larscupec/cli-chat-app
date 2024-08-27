@@ -32,6 +32,7 @@ int main(int argc, char **argv) {
   }
   atexit(enet_deinitialize);
 
+  setlocale(LC_ALL, "");
   initscr();
 
   if (has_colors()) {
