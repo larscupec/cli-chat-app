@@ -11,8 +11,9 @@ ChatMode *ChatMode::GetInstance() {
   return instance;
 }
 
-void ChatMode::HandleInput(std::string input) {
+bool ChatMode::HandleInput(std::string input) {
   ChatMessage chat(Client::GetInstance()->GetUsername(),
                    Client::GetInstance()->GetUserColor(), input);
   Client::GetInstance()->Send(&chat);
+  return true;
 }

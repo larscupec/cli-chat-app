@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IConsoleMode.hpp"
+#include "ConsoleMode.hpp"
 #include <string>
 #include <vector>
 
@@ -12,14 +12,14 @@ public:
 
   void ProcessInput();
 
-  void SetConsoleMode(IConsoleMode *consoleMode);
+  void SetConsoleMode(ConsoleMode *consoleMode);
 
 private:
   Console() {}
 
   static Console *instance;
   
-  IConsoleMode *consoleMode = nullptr;
+  ConsoleMode *consoleMode = nullptr;
 
   std::string ReadInput();
   void ClearInput();

@@ -198,10 +198,13 @@ void Console::ProcessInput()
   {
     return;
   }
-  consoleMode->HandleInput(input);
+  if (!consoleMode->Handle(input))
+  {
+    Debug::Log("Unknown command '" + input + "'");
+  }
 }
 
-void Console::SetConsoleMode(IConsoleMode *consoleMode)
+void Console::SetConsoleMode(ConsoleMode *consoleMode)
 {
   this->consoleMode = consoleMode;
   Debug::Log("Console Mode set to " + consoleMode->ToString());

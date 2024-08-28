@@ -1,15 +1,15 @@
 #pragma once
 
-#include "IConsoleMode.hpp"
+#include "ConsoleMode.hpp"
 
 class Client;
 
-class ChatMode : public IConsoleMode {
+class ChatMode : public ConsoleMode {
 public:
 
   static ChatMode *GetInstance();
   
-  virtual void HandleInput(std::string input) override;
+  virtual bool HandleInput(std::string input) override;
   virtual std::string ToString() override { return "Chat"; }
   
 private:

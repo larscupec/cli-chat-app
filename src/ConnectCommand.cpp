@@ -7,6 +7,7 @@
 #include <thread>
 #include "App.hpp"
 #include "Console.hpp"
+#include <stdexcept>
 
 void ConnectCommand::Execute(std::vector<std::string> args) {
   if (args.size() != 2) {
@@ -15,7 +16,17 @@ void ConnectCommand::Execute(std::vector<std::string> args) {
   }
 
   std::string ip = args[0];
-  int port = std::stoi(args[1]);
+  int port = 0;
+  
+  try
+  {
+    port = std::stoi(args[1]);
+  }
+  catch(const std::invalid_argument& e)
+  {
+    Debug::LogError("Invalid port number '" + args[1] + "'");
+    return;
+  }
 
   if (Client::GetInstance()->ConnectTo(ip, port)) {
     std::thread *clientThread = new std::thread(&Client::Listen, Client::GetInstance());

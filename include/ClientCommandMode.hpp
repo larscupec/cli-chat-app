@@ -1,12 +1,12 @@
 #pragma once
 
-#include "IConsoleMode.hpp"
+#include "ConsoleMode.hpp"
 
-class ClientCommandMode : public IConsoleMode {
+class ClientCommandMode : public ConsoleMode {
 public:
   static ClientCommandMode *GetInstance();
   
-  virtual void HandleInput(std::string input) override;
+  virtual bool HandleInput(std::string input) override;
   virtual std::string ToString() override { return "Command (Client)"; }
 
 private:

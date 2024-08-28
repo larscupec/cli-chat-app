@@ -64,7 +64,6 @@ There are also keyboard shortcuts for other functions, for example:
 ## TODO
 
  - More server commands (ban, unban, mute, unmute)
- - Control the server through the client
 
 ## Disclaimer
 

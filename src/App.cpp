@@ -98,6 +98,7 @@ void App::Run(bool isHost, bool isServer) {
       std::thread *serverThread =
           new std::thread(&Server::Start, Server::GetInstance(), DEFAULT_SERVER_PORT);
       ThreadManager::Add(serverThread);
+      ClientCommandMode::GetInstance()->SetNext(ServerCommandMode::GetInstance());
     }
   } else {
     Window *debugWindow =

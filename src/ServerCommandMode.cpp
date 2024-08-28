@@ -16,7 +16,7 @@ ServerCommandMode *ServerCommandMode::GetInstance() {
   return instance;
 }
 
-void ServerCommandMode::HandleInput(std::string input) {
+bool ServerCommandMode::HandleInput(std::string input) {
   std::vector<std::string> tokens = StringHelper::SplitString(input, " ");
   std::string command = tokens.front();
   tokens.erase(tokens.begin());
@@ -35,6 +35,8 @@ void ServerCommandMode::HandleInput(std::string input) {
     kick.Execute(args);
   }
   else {
-    Debug::Log("Unknown command '" + command + "'");
+    return false;
   }
+
+  return true;
 }

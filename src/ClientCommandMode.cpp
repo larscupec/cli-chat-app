@@ -18,7 +18,7 @@ ClientCommandMode *ClientCommandMode::GetInstance() {
   return instance;
 }
 
-void ClientCommandMode::HandleInput(std::string input) {
+bool ClientCommandMode::HandleInput(std::string input) {
   std::vector<std::string> tokens = StringHelper::SplitString(input, " ");
   std::string command = tokens.front();
   tokens.erase(tokens.begin());
@@ -37,6 +37,8 @@ void ClientCommandMode::HandleInput(std::string input) {
     OpenWindowCommand openWindow;
     openWindow.Execute(args);
   } else {
-    Debug::Log("Unknown command '" + command + "'");
+    return false;
   }
+  
+  return true;
 }
