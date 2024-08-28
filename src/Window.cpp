@@ -117,6 +117,8 @@ void Window::Refresh()
                GetContainerBeginY() + GetContainerHeight(),
                GetContainerBeginX() + GetContainerWidth());
 
+  touchwin(container);
+
   pnoutrefresh(pad, 0, 0, GetContainerBeginY() + 1, GetContainerBeginX() + 1,
                GetContainerBeginY() + GetPadHeight(), GetContainerBeginX() + GetPadWidth());
 
@@ -200,16 +202,11 @@ void Window::SetIsOpen(bool state)
 
 void Window::Redraw()
 {
-  int currentCursorPositionX = GetCursorPositionX();
-  int currentCursorPositionY = GetCursorPositionY();
-
   wclear(container);
 
   DrawBorder();
   DrawTitle();
   DrawPad();
-
-  wmove(pad, currentCursorPositionY, currentCursorPositionX);
 
   Refresh();
 }

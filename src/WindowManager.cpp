@@ -16,7 +16,6 @@ void WindowManager::FocusNextWindow()
   do
   {
     focusedWindowIndex++;
-
     if (focusedWindowIndex == windows.size())
     {
       focusedWindowIndex = 0;
@@ -49,30 +48,25 @@ void WindowManager::OpenWindow(std::string windowTitle)
 {
   Window *window = Find(windowTitle);
 
-  if (window == ConsoleWindow::GetWindow())
+  if (!window || window == ConsoleWindow::GetWindow() || window->GetIsOpen())
   {
-    return;
-  }
-
-  if (!window)
-  {
-    Debug::LogError("Can't open window '" + windowTitle + "'");
     return;
   }
 
   if (IsOnlyConsoleOpen())
   {
-    Focus(Find(windowTitle));
-    GetFocusedWindow()->SetIsOpen(true);
-    Maximize(GetFocusedWindow());
+    Window *window = Find(windowTitle);
+    Maximize(window);
+    window->SetIsOpen(true);
+    Focus(window);
   }
   else
   {
+    SplitToLeft(window);
     FocusNextNotConsole();
     SplitToRight(GetFocusedWindow());
+    window->SetIsOpen(true);
     Focus(window);
-    GetFocusedWindow()->SetIsOpen(true);
-    SplitToLeft(GetFocusedWindow());
   }
 }
 
@@ -155,6 +149,6 @@ void WindowManager::SplitToLeft(Window *window)
   int maxWidth = getmaxx(stdscr);
   int maxHeight = getmaxy(stdscr);
 
-  window->Resize(maxWidth / 2, maxHeight - CONSOLE_HEIGHT);
   window->Move(0, 0);
+  window->Resize(maxWidth / 2, maxHeight - CONSOLE_HEIGHT);
 }
