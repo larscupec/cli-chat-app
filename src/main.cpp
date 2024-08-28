@@ -32,7 +32,6 @@ int main(int argc, char **argv) {
   }
   atexit(enet_deinitialize);
 
-  setlocale(LC_ALL, "");
   initscr();
 
   if (has_colors()) {
@@ -67,8 +66,6 @@ int main(int argc, char **argv) {
   ThreadManager::JoinAll();
 
   endwin();
-
-  delete App::GetInstance();
 
   return 0;
 }

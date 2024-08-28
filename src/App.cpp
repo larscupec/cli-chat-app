@@ -25,24 +25,28 @@ const int DEFAULT_SERVER_PORT = 1234;
 
 App *App::instance = nullptr;
 
-App *App::GetInstance() {
-  if (!instance) {
+App *App::GetInstance()
+{
+  if (!instance)
+  {
     instance = new App();
   }
   return instance;
 }
 
-App::App() {
+App::App()
+{
 
   Debug::Log("Initializing the console...");
 
   Debug::Log("Done!");
 }
 
-void App::Run(bool isHost, bool isServer) {
+void App::Run(bool isHost, bool isServer)
+{
   this->isHost = isHost;
   this->isServer = isServer;
-  
+
   Debug::Log("Starting clichatapp...");
 
   Debug::Log("Creating NCurses windows...");
@@ -52,7 +56,8 @@ void App::Run(bool isHost, bool isServer) {
 
   WINDOW *mainWindow = newpad(maxHeight, maxWidth);
 
-  if (!isServer) {
+  if (!isServer)
+  {
 
     Window *chatWindow = new Window(mainWindow, "Chat",
                                     maxHeight - CONSOLE_HEIGHT, maxWidth / 2);
@@ -72,7 +77,13 @@ void App::Run(bool isHost, bool isServer) {
 
     chatWindow->SetHasFocus(true);
 
-    if (!std::filesystem::exists(CLIENT_INFO_PATH)) {
+    for (size_t i = 0; i < Debug::GetMessageCount(); i++)
+    {
+      DebugWindow::PrintLine(Debug::GetMessages()[i]);
+    }
+
+    if (!std::filesystem::exists(CLIENT_INFO_PATH))
+    {
       Debug::LogWarning(
           "'clientInfo.json' was not found, creating a new one...");
       JsonFileWriter clientInfo(CLIENT_INFO_PATH);
@@ -94,13 +105,16 @@ void App::Run(bool isHost, bool isServer) {
     ChatWindow::PrintLine("Welcome " + Client::GetInstance()->GetUsername() +
                           "!");
 
-    if (isHost) {
+    if (isHost)
+    {
       std::thread *serverThread =
           new std::thread(&Server::Start, Server::GetInstance(), DEFAULT_SERVER_PORT);
       ThreadManager::Add(serverThread);
       ClientCommandMode::GetInstance()->SetNext(ServerCommandMode::GetInstance());
     }
-  } else {
+  }
+  else
+  {
     Window *debugWindow =
         new Window(mainWindow, "Debug", maxHeight - CONSOLE_HEIGHT, maxWidth);
     Window *consoleWindow = new Window(mainWindow, "Console", CONSOLE_HEIGHT,
@@ -114,6 +128,11 @@ void App::Run(bool isHost, bool isServer) {
 
     debugWindow->SetHasFocus(true);
 
+    for (size_t i = 0; i < Debug::GetMessageCount(); i++)
+    {
+      DebugWindow::PrintLine(Debug::GetMessages()[i]);
+    }
+
     std::thread *serverThread =
         new std::thread(&Server::Start, Server::GetInstance(), DEFAULT_SERVER_PORT);
     ThreadManager::Add(serverThread);
@@ -123,23 +142,28 @@ void App::Run(bool isHost, bool isServer) {
 
   isRunning = true;
 
-  while (isRunning) {
+  while (isRunning)
+  {
     Console::GetInstance()->ProcessInput();
   }
 }
 
-void App::Quit() {
+void App::Quit()
+{
   Debug::Log("Exiting clichatapp...");
   isRunning = false;
-  if (Client::GetInstance()->GetIsConnected()) {
+  if (Client::GetInstance()->GetIsConnected())
+  {
     Client::GetInstance()->Disconnect();
   }
-  if (Server::GetInstance()->GetIsRunning()) {
+  if (Server::GetInstance()->GetIsRunning())
+  {
     Server::GetInstance()->Stop();
   }
 }
 
-App::~App() {
+App::~App()
+{
   delete ChatWindow::GetWindow();
   delete DebugWindow::GetWindow();
   delete ConsoleWindow::GetWindow();
