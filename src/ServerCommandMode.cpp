@@ -6,6 +6,7 @@
 #include "StringHelper.hpp"
 #include <vector>
 #include "ExitCommand.hpp"
+#include "Server.hpp"
 
 ServerCommandMode *ServerCommandMode::instance = nullptr;
 
@@ -17,6 +18,12 @@ ServerCommandMode *ServerCommandMode::GetInstance() {
 }
 
 bool ServerCommandMode::HandleInput(std::string input) {
+  if (!Server::GetInstance()->GetIsRunning())
+  {
+    Debug::LogError("The server isn't running");
+    return false;
+  }
+
   std::vector<std::string> tokens = StringHelper::SplitString(input, " ");
   std::string command = tokens.front();
   tokens.erase(tokens.begin());
