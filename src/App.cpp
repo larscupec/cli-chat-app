@@ -18,6 +18,7 @@
 #include <ncursesw/ncurses.h>
 #include <string>
 #include <thread>
+#include "GeneralCommandMode.hpp"
 
 const std::string CLIENT_INFO_PATH = "./clientInfo.json";
 const std::string DEFAULT_USERNAME = "Guest";
@@ -98,6 +99,7 @@ void App::Run(bool isHost, bool isServer)
     Client::GetInstance()->SetUsername(username);
 
     Console::GetInstance()->SetConsoleMode(ClientCommandMode::GetInstance());
+    ClientCommandMode::GetInstance()->SetNext(GeneralCommandMode::GetInstance());
 
     Debug::Log("Done!");
 
@@ -110,7 +112,8 @@ void App::Run(bool isHost, bool isServer)
       std::thread *serverThread =
           new std::thread(&Server::Start, Server::GetInstance(), DEFAULT_SERVER_PORT);
       ThreadManager::Add(serverThread);
-      ClientCommandMode::GetInstance()->SetNext(ServerCommandMode::GetInstance());
+      
+      GeneralCommandMode::GetInstance()->SetNext(ServerCommandMode::GetInstance());
     }
   }
   else
@@ -138,6 +141,7 @@ void App::Run(bool isHost, bool isServer)
     ThreadManager::Add(serverThread);
 
     Console::GetInstance()->SetConsoleMode(ServerCommandMode::GetInstance());
+    ServerCommandMode::GetInstance()->SetNext(GeneralCommandMode::GetInstance());
   }
 
   isRunning = true;

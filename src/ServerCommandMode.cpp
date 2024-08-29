@@ -1,5 +1,5 @@
 #include "ServerCommandMode.hpp"
-#include "CommandList.hpp"
+#include "Commands.hpp"
 #include "Debug.hpp"
 #include "KickCommand.hpp"
 #include "StopServerCommand.hpp"
