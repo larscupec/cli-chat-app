@@ -38,7 +38,11 @@ While In Chat Mode everything you type will be processed as a chat message and s
  - `stop`
 	 - Stops the server.
  - `kick <username>`
-	 - Disconnects a peer with the specified username from the server.
+	 - Disconnects a user with the specified username from the server.
+ - `ban <username>`
+	 - Bans a user with the specified username from the server.
+ - `unban <ip address (in decimal)>`
+	 - Removes the specified address from the ban list.
 
 ### General commands:
 
