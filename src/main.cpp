@@ -15,10 +15,10 @@ int main(int argc, char **argv) {
   
   // Read command line arguments
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--server" || std::string(argv[i]) == "-S") {
+    if (std::string(argv[i]) == "-server" || std::string(argv[i]) == "-s") {
       isServer = true;
-    } else if (std::string(argv[i]) == "--host" ||
-               std::string(argv[i]) == "-H") {
+    } else if (std::string(argv[i]) == "-host" ||
+               std::string(argv[i]) == "-h") {
       isHost = true;
     } else {
       Debug::Log("Invalid argument '" + std::string(argv[i]) + "'");

@@ -14,6 +14,7 @@
 #include "enet/enet.h"
 #include <stdexcept>
 #include <string>
+#include "BanList.hpp"
 
 const size_t MAX_USER_COUNT = 32;
 const size_t MAX_CHANNELS = 2;
@@ -23,39 +24,47 @@ const unsigned int EVENT_TIMEOUT_MS = 1000;
 
 Server *Server::instance = nullptr;
 
-Server::Server() {
-  chat = new Chat();
-  userColorTable = new UserColorTable();
+Server::Server() {}
 
-  ServerConnectionHandler *connectionHandler =
-    new ServerConnectionHandler(this);
-  ServerChatHandler *chatMessageHandler = new ServerChatHandler(this);
-
-  connectionHandler->SetNext(chatMessageHandler);
-
-  messageHandler = connectionHandler;
-}
-
-Server::~Server() { 
+Server::~Server()
+{
   delete messageHandler;
   delete chat;
+  delete userColorTable;
+  delete banList;
 }
 
-Server *Server::GetInstance() {
-  if (!instance) {
+Server *Server::GetInstance()
+{
+  if (!instance)
+  {
     instance = new Server();
   }
   return instance;
 }
 
-void Server::Start(int port) {
-  if (isRunning) {
+void Server::Start(int port)
+{
+  if (isRunning)
+  {
     Debug::LogError("Server: Already running");
     return;
   }
-  
+
+  chat = new Chat();
+  userColorTable = new UserColorTable();
+  banList = new BanList();
+
+  ServerConnectionHandler *connectionHandler =
+      new ServerConnectionHandler(this);
+  ServerChatHandler *chatMessageHandler = new ServerChatHandler(this);
+
+  connectionHandler->SetNext(chatMessageHandler);
+
+  messageHandler = connectionHandler;
+
   ENetAddress address;
-  
+
   address.host = ENET_HOST_ANY;
   address.port = port;
 
@@ -63,7 +72,8 @@ void Server::Start(int port) {
 
   server = enet_host_create(&address, MAX_USER_COUNT, MAX_CHANNELS, INCOMING_BANDWIDTH, OUTGOING_BANDWIDTH);
 
-  if (!server) {
+  if (!server)
+  {
     Debug::Log("An error occurred while trying to create an ENet host for the "
                "server.");
     throw std::runtime_error("An error occurred while trying to create an ENet "
@@ -71,21 +81,25 @@ void Server::Start(int port) {
   }
 
   Debug::Log("Done!");
-  
+
   Debug::Log("Server started on port " + std::to_string(address.port));
 
   isRunning = true;
 
   ENetEvent event;
 
-  while (isRunning) {
-    if (enet_host_service(server, &event, EVENT_TIMEOUT_MS) > 0) {
-      switch (event.type) {
+  while (isRunning)
+  {
+    if (enet_host_service(server, &event, EVENT_TIMEOUT_MS) > 0)
+    {
+      switch (event.type)
+      {
       case ENET_EVENT_TYPE_CONNECT:
         Debug::Log("Server: Incoming connection from " +
                    std::to_string(event.peer->address.host));
         break;
-      case ENET_EVENT_TYPE_RECEIVE: {
+      case ENET_EVENT_TYPE_RECEIVE:
+      {
         json data = json::parse((char *)event.packet->data);
         unsigned int dataLength = event.packet->dataLength;
         ENetPeer *peer = event.peer;
@@ -100,15 +114,20 @@ void Server::Start(int port) {
         enet_packet_destroy(event.packet);
         break;
       }
-      case ENET_EVENT_TYPE_DISCONNECT: {
-	User *user = (User*)event.peer->data;
-	Debug::Log("Server: " + user->GetUsername() + " has left the server.");
-	ChatMessage *userLeftMessage = new ChatMessage("Server", SERVER_CHAT_COLOR, user->GetUsername() + " has left the server.");
-	chat->Add(userLeftMessage);
-	Broadcast(userLeftMessage);
-	
-	delete (User*)event.peer->data;
-	event.peer->data = nullptr;
+      case ENET_EVENT_TYPE_DISCONNECT:
+      {
+        User *user = (User *)event.peer->data;
+        if (!user)
+        {
+          break;
+        }
+        Debug::Log("Server: " + user->GetUsername() + " has left the server.");
+        ChatMessage *userLeftMessage = new ChatMessage("Server", SERVER_CHAT_COLOR, user->GetUsername() + " has left the server.");
+        chat->Add(userLeftMessage);
+        Broadcast(userLeftMessage);
+        delete user;
+        event.peer->data = nullptr;
+
         break;
       }
       }
@@ -121,21 +140,30 @@ void Server::Start(int port) {
   Debug::Log("Done!");
 }
 
-void Server::Stop() {
+void Server::Stop()
+{
   Debug::Log("Server: Saving conversation...");
   JsonFileWriter conversationFile("./conversation.json");
   conversationFile.Write(chat->ToJson());
 
-  Debug::Log("Server: Disconnecting all peers...");
-  DisconnectMessage disconnectMessage("Server shut down");
-  Broadcast(&disconnectMessage);
-  enet_host_flush(server);
-  
+  Debug::Log("Server: Saving ban list...");
+  JsonFileWriter banListFile("./banList.json");
+  banListFile.Write(banList->ToJson());
+
+  if (server->connectedPeers > 0)
+  {
+    Debug::Log("Server: Disconnecting all peers...");
+    DisconnectMessage disconnectMessage("Server shut down");
+    Broadcast(&disconnectMessage);
+    enet_host_flush(server);
+  }
+
   Debug::Log("Stopping server...");
   isRunning = false;
 }
 
-void Server::SendTo(ENetPeer *peer, Message *message) {
+void Server::SendTo(ENetPeer *peer, Message *message)
+{
   std::string messageString = message->ToJson().dump();
   ENetPacket *packet = enet_packet_create(messageString.c_str(),
                                           strlen(messageString.c_str()) + 1,
@@ -143,7 +171,8 @@ void Server::SendTo(ENetPeer *peer, Message *message) {
   enet_peer_send(peer, 0, packet);
 }
 
-void Server::Broadcast(Message *message) {
+void Server::Broadcast(Message *message)
+{
   std::string messageString = message->ToJson().dump();
   ENetPacket *packet = enet_packet_create(messageString.c_str(),
                                           strlen(messageString.c_str()) + 1,
@@ -151,10 +180,13 @@ void Server::Broadcast(Message *message) {
   enet_host_broadcast(server, 0, packet);
 }
 
-ENetPeer *Server::GetUserPeer(std::string username) {
-  for (int i = 0; i < server->connectedPeers; i++) {
-    User *user = (User*)server->peers[i].data;
-    if (user->GetUsername() == username) {
+ENetPeer *Server::GetUserPeer(std::string username)
+{
+  for (int i = 0; i < server->connectedPeers; i++)
+  {
+    User *user = (User *)server->peers[i].data;
+    if (user->GetUsername() == username)
+    {
       return &server->peers[i];
     }
   }

@@ -8,6 +8,7 @@ class Chat;
 class Message;
 class UserColorTable;
 class User;
+class BanList;
 
 class Server {
 public:
@@ -25,6 +26,7 @@ public:
   UserColorTable *GetUserColorTable() { return userColorTable; }
   bool GetIsRunning() { return isRunning; }
   ENetPeer *GetUserPeer(std::string username);
+  BanList *GetBanList() { return banList; }
 
 private:
   Server();
@@ -36,6 +38,7 @@ private:
   MessageHandler *messageHandler = nullptr;
   Chat *chat = nullptr;
   UserColorTable *userColorTable = nullptr;
+  BanList *banList = nullptr;
 
   bool isRunning = false;
 };

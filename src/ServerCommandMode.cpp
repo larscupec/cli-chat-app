@@ -7,6 +7,8 @@
 #include <vector>
 #include "ExitCommand.hpp"
 #include "Server.hpp"
+#include "BanCommand.hpp"
+#include "UnbanCommand.hpp"
 
 ServerCommandMode *ServerCommandMode::instance = nullptr;
 
@@ -40,6 +42,14 @@ bool ServerCommandMode::HandleInput(std::string input) {
   else if (command == COMMAND_KICK) {
     KickCommand kick;
     kick.Execute(args);
+  }
+  else if (command == COMMAND_BAN) {
+    BanCommand ban;
+    ban.Execute(args);
+  }
+  else if (command == COMMAND_UNBAN) {
+    UnbanCommand unban;
+    unban.Execute(args);
   }
   else {
     return false;

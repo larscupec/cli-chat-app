@@ -1,12 +1,18 @@
 #include "JsonFileWriter.hpp"
-#include <filesystem>
-#include <fstream>
-#include "json/json.hpp"
-#include <string>
 
-JsonFileWriter::JsonFileWriter(std::string path) : path(path) {}
+JsonFileWriter::JsonFileWriter(std::string path) : path(path)
+{
+  file = std::ofstream(path);
 
-JsonFileWriter::~JsonFileWriter() {}
+  if (!file.good()) {
+    throw std::runtime_error("Could not open file '" + path + "'");
+  }
+}
+
+JsonFileWriter::~JsonFileWriter()
+{
+  file.close();
+}
 
 template<typename T>
 void JsonFileWriter::Write(std::string key, T value) {
@@ -20,16 +26,14 @@ void JsonFileWriter::Write(std::string key, T value) {
 
   json[key] = value;
 
-  std::ofstream target(path);
-  target << json;
-  target.close();
+  file << json;
+  file.close();
 }
 
 template void JsonFileWriter::Write<int>(std::string, int);
 template void JsonFileWriter::Write<std::string>(std::string, std::string);
 
 void JsonFileWriter::Write(json json) {
-  std::ofstream target(path);
-  target << json;
-  target.close();
+  file << json;
+  file.close();
 }

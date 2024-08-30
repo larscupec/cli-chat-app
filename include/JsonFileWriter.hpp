@@ -2,6 +2,7 @@
 
 #include <string>
 #include "json/json.hpp"
+#include <fstream>
 
 using nlohmann::json;
 
@@ -18,4 +19,5 @@ public:
 
 private:
   std::string path = "";
+  std::ofstream file;
 };    

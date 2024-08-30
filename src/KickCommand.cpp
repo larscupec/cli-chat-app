@@ -4,7 +4,7 @@
 #include "DisconnectMessage.hpp"
 #include "Server.hpp"
 #include "User.hpp"
-#include <vector>
+#include "Chat.hpp"
 
 void KickCommand::Execute(std::vector<std::string> args) {
   if (args.empty()) {
@@ -26,13 +26,11 @@ void KickCommand::Execute(std::vector<std::string> args) {
 
   Server::GetInstance()->SendTo(peer, &disconnectMessage);
 
-  User *user = (User *)peer->data;
-
-  ChatMessage playerKickedMessage("Server", SERVER_CHAT_COLOR,
-                                  user->GetUsername() +
-                                      " was kicked from the server");
-
-  Server::GetInstance()->Broadcast(&playerKickedMessage);
+  ChatMessage *userKickedMessage = new ChatMessage("Server", SERVER_CHAT_COLOR,
+                                                   username +
+                                                   " was kicked from the server");
+  Server::GetInstance()->GetChat()->Add(userKickedMessage);
+  Server::GetInstance()->Broadcast(userKickedMessage);
 
   Debug::Log("Server: Kicked " + username + " from the server");
 }

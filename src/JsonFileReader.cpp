@@ -1,26 +1,25 @@
 #include "JsonFileReader.hpp"
-#include "json/json.hpp"
-#include <filesystem>
-#include <fstream>
 #include <stdexcept>
 
-using nlohmann::json;
+JsonFileReader::JsonFileReader(std::string path) : path(path)
+{
+  file = std::ifstream(path);
 
-JsonFileReader::JsonFileReader(std::string path) : path(path) {}
+  if (!file.good()) {
+    throw std::runtime_error("Could not open file '" + path + "'");
+  }
+}
 
-JsonFileReader::~JsonFileReader() {}
+JsonFileReader::~JsonFileReader()
+{
+  file.close();
+}
 
 template <typename T>
 T JsonFileReader::Read(std::string key) {
   json target;
-
-  if (!std::filesystem::exists(path)) {
-    throw std::runtime_error("Could not open file '" + path + "'");
-  }
   
-  std::ifstream file(path);
   file >> target;
-  file.close();
 
   if (!target.contains(key)) {
     throw std::runtime_error("'" + path + "' does not contain an entry with the key '" + key + "'");
@@ -31,3 +30,12 @@ T JsonFileReader::Read(std::string key) {
 
 template int JsonFileReader::Read<int>(std::string);
 template std::string JsonFileReader::Read<std::string>(std::string);
+
+json JsonFileReader::ReadJson()
+{
+  json result;
+
+  file >> result;
+
+  return result;
+}
