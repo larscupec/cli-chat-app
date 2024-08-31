@@ -18,3 +18,4 @@ const std::string COMMAND_STOP = "stop";
 const std::string COMMAND_KICK = "kick";
 const std::string COMMAND_BAN = "ban";
 const std::string COMMAND_UNBAN = "unban";
+const std::string COMMAND_MUTE = "mute";

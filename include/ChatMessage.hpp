@@ -14,6 +14,8 @@ public:
   std::string GetContent() { return content; }
   Color GetColor() { return color; }
 
+  void SetContent(std::string content) { this->content = content; }
+
 private:
   std::string sender = "";
   std::string content = "";

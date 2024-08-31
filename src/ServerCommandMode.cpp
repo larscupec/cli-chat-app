@@ -9,6 +9,7 @@
 #include "Server.hpp"
 #include "BanCommand.hpp"
 #include "UnbanCommand.hpp"
+#include "MuteCommand.hpp"
 
 ServerCommandMode *ServerCommandMode::instance = nullptr;
 
@@ -50,6 +51,10 @@ bool ServerCommandMode::HandleInput(std::string input) {
   else if (command == COMMAND_UNBAN) {
     UnbanCommand unban;
     unban.Execute(args);
+  }
+  else if (command == COMMAND_MUTE) {
+    MuteCommand mute;
+    mute.Execute(args);
   }
   else {
     return false;

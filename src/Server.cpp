@@ -109,7 +109,10 @@ void Server::Start(int port)
                    "] packet of length " + std::to_string(dataLength) +
                    " was received from " + std::to_string(peer->address.host));
 
-        messageHandler->Handle(message, peer);
+        if (!messageHandler->Handle(message, peer))
+        {
+          delete message;
+        }
 
         enet_packet_destroy(event.packet);
         break;

@@ -6,46 +6,64 @@
 #include "WelcomeMessage.hpp"
 #include "UnknownMessage.hpp"
 #include "DisconnectMessage.hpp"
+#include "ServerMessage.hpp"
 
 const std::string CLIENT_INFO_MESSAGE = "client-info";
 const std::string CHAT_MESSAGE = "chat-message";
 const std::string WELCOME_MESSAGE = "welcome-message";
 const std::string UNKNOWN_MESSAGE = "none";
 const std::string DISCONNECT_MESSAGE = "disconnect";
+const std::string SERVER_MESSAGE = "server-message";
 
-Message *Message::Parse(json message) {
+Message *Message::Parse(json message)
+{
   std::string messageType = message["type"].get<std::string>();
 
-  if (messageType == CLIENT_INFO_MESSAGE) {
+  if (messageType == CLIENT_INFO_MESSAGE)
+  {
     std::string username = message["username"].get<std::string>();
 
     return new ClientInfoMessage(username);
-  } else if (messageType == CHAT_MESSAGE) {
+  }
+  else if (messageType == CHAT_MESSAGE)
+  {
     std::string sender = message["sender"].get<std::string>();
     std::string content = message["content"].get<std::string>();
     Color color = (Color)message["color"].get<int>();
 
     return new ChatMessage(sender, color, content);
   }
-  else if (messageType == WELCOME_MESSAGE) {
+  else if (messageType == WELCOME_MESSAGE)
+  {
     Color userColor = (Color)message["userColor"].get<int>();
     std::string conversation = message["conversation"].get<std::string>();
 
     return new WelcomeMessage(userColor, conversation);
   }
-  else if (messageType == DISCONNECT_MESSAGE) {
+  else if (messageType == DISCONNECT_MESSAGE)
+  {
     std::string reason = message["reason"].get<std::string>();
 
     return new DisconnectMessage(reason);
   }
-  else {
+  else if (messageType == SERVER_MESSAGE)
+  {
+    std::string msg = message["message"].get<std::string>();
+
+    return new ServerMessage(msg);
+  }
+  else
+  {
     return new UnknownMessage();
   }
 }
 
-std::string Message::GetTypeAsString() {
-  switch (GetType()) {
-  default: case MessageType::NONE:
+std::string Message::GetTypeAsString()
+{
+  switch (GetType())
+  {
+  default:
+  case MessageType::NONE:
     return UNKNOWN_MESSAGE;
   case MessageType::CLIENT_INFO:
     return CLIENT_INFO_MESSAGE;
@@ -55,5 +73,7 @@ std::string Message::GetTypeAsString() {
     return WELCOME_MESSAGE;
   case MessageType::DISCONNECT_MESSAGE:
     return DISCONNECT_MESSAGE;
+  case MessageType::SERVER_MESSAGE:
+    return SERVER_MESSAGE;
   }
 }

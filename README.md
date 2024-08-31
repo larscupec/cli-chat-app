@@ -41,8 +41,10 @@ While In Chat Mode everything you type will be processed as a chat message and s
 	 - Disconnects a user with the specified username from the server.
  - `ban <username>`
 	 - Bans a user with the specified username from the server.
- - `unban <ip address (in decimal)>`
-	 - Removes the specified address from the ban list.
+ - `unban <ip (decimal)>`
+	 - Removes the specified `<ip>` from the ban list.
+ - `mute <username> <seconds (optional)>`
+	 - Mutes the user with the specified username for the specified amount of seconds. If no time value is passed the user is muted indefinitely.
 
 ### General commands:
 
@@ -67,7 +69,7 @@ There are also keyboard shortcuts for other functions, for example:
 
 ## TODO
 
- - More server commands (mute, unmute)
+ - More server commands (unmute)
 
 ## Disclaimer
 

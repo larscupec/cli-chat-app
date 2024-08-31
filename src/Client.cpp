@@ -10,6 +10,7 @@
 #include <enet/enet.h>
 #include <stdexcept>
 #include <string>
+#include "ClientServerMessageHandler.hpp"
 
 const size_t OUTGOING_CONNECTION_COUNT = 1;
 const size_t MAX_CHANNELS = 2;
@@ -33,9 +34,11 @@ Client::Client() {
   ClientWelcomeHandler *welcomeHandler = new ClientWelcomeHandler(chatHandler);
   LeaveCommand *leaveCommand = new LeaveCommand();
   ClientDisconnectHandler *disconnectHandler = new ClientDisconnectHandler(leaveCommand);
+  ClientServerMessageHandler *serverMessageHandler = new ClientServerMessageHandler();
 
   chatHandler->SetNext(welcomeHandler);
   welcomeHandler->SetNext(disconnectHandler);
+  disconnectHandler->SetNext(serverMessageHandler);
 
   messageHandler = chatHandler;
 }
