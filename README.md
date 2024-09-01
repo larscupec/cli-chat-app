@@ -10,7 +10,7 @@ Once I build it with static libs you will just have to run the .exe file and hav
 
 ## Usage
 
-Currently the app can be run with two optional command line arguments: `-server` or `-s` and `-host` or `-h`. The `-server` argument tells the cli-chat-app to run in server mode (without the UI). This is useful if you want to have a dedicated server. The `-host` argument makes it run the server with the UI so that you can use the app and host a server simultaneously.
+Currently the app can be run with two optional command line arguments: `-server` or `-s` and `-host` or `-h`. The `-server` argument tells the cli-chat-app to run in server mode. This is useful if you want to have a dedicated server. The `-host` argument makes it so you can use the app as a client and host a server simultaneously.
 
 ### clientInfo.json
 

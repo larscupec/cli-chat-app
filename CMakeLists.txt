@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.30.1)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-project(clichatapp)
+project(clichatapp VERSION 1.0)
+
+configure_file(clichatappConfig.h.in clichatappConfig.h)
 
 if (UNIX AND NOT APPLE)
    find_library(ENET libenet.a REQUIRED)
@@ -10,6 +12,8 @@ endif (UNIX AND NOT APPLE)
 
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
 add_executable(${PROJECT_NAME} ${SRC_FILES})
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR})
 
 if (UNIX AND NOT APPLE)
    target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
