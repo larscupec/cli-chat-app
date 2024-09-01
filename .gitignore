@@ -53,3 +53,6 @@ CMakeUserPresets.json
 *.json
 *.sh
 *.bat
+
+# Exceptions
+!CMakePresets.json

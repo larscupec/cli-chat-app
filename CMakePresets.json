@@ -1,0 +1,17 @@
+{
+    "version": 8,
+    "configurePresets": [
+        {
+            "name": "debug",
+            "displayName": "Windows GCC x64 (MinGW Makefiles) Debug",
+            "description": "Using GCC x64 compiler with \"MinGW Makefiles\" geneartor on Windows - Debug",
+            "generator": "MinGW Makefiles",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_COMPILER": "gcc.exe",
+                "CMAKE_CXX_COMPILER": "g++.exe"
+            }
+        }
+    ]
+}
