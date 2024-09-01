@@ -83,10 +83,9 @@ void App::Run(bool isHost, bool isServer)
       DebugWindow::PrintLine(Debug::GetMessages()[i]);
     }
 
-    if (!std::filesystem::exists(CLIENT_INFO_PATH))
+    if (!std::filesystem::exists(CLIENT_INFO_PATH) || !json::accept(std::ifstream(CLIENT_INFO_PATH)))
     {
-      Debug::LogWarning(
-          "'clientInfo.json' was not found, creating a new one...");
+      Debug::LogWarning("'clientInfo.json' was not found, creating a new one...");
       JsonFileWriter clientInfo(CLIENT_INFO_PATH);
       clientInfo.Write("username", DEFAULT_USERNAME);
     }

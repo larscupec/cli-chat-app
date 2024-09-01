@@ -2,15 +2,27 @@
     "version": 8,
     "configurePresets": [
         {
-            "name": "debug",
+            "name": "windows-debug",
             "displayName": "Windows GCC x64 (MinGW Makefiles) Debug",
             "description": "Using GCC x64 compiler with \"MinGW Makefiles\" geneartor on Windows - Debug",
             "generator": "MinGW Makefiles",
-            "binaryDir": "${sourceDir}/build/${presetName}",
+            "binaryDir": "${sourceDir}/build/debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_C_COMPILER": "gcc.exe",
                 "CMAKE_CXX_COMPILER": "g++.exe"
+            }
+        },
+        {
+            "name": "linux-debug",
+            "displayName": "Linux GCC x64 (Unix Makefiles) Debug",
+            "description": "Using GCC x64 compiler with \"Unix Makefiles\" geneartor on Linux - Debug",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++"
             }
         }
     ]

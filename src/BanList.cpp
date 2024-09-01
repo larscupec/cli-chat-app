@@ -12,7 +12,7 @@ BanList::BanList()
     }
 
     JsonFileReader banListFile(BAN_LIST_FILE_PATH);
-    json banList = banListFile.ReadJson();
+    json banList = banListFile.GetJson();
 
     for (auto it : banList)
     {

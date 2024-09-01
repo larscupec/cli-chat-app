@@ -20,14 +20,17 @@ void JsonFileWriter::Write(std::string key, T value) {
 
   if (std::filesystem::exists(path)) {
     std::ifstream target(path);
-    target >> json;
-    target.close();
+    if (json::accept(target))
+    {
+      target.seekg(0);
+      target >> json;
+      target.close();
+    }
   }
 
   json[key] = value;
 
   file << json;
-  file.close();
 }
 
 template void JsonFileWriter::Write<int>(std::string, int);
@@ -35,5 +38,4 @@ template void JsonFileWriter::Write<std::string>(std::string, std::string);
 
 void JsonFileWriter::Write(json json) {
   file << json;
-  file.close();
 }

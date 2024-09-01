@@ -10,14 +10,14 @@ class JsonFileReader
 {
 public:
   JsonFileReader(std::string path);
-  ~JsonFileReader();
+  ~JsonFileReader() {}
 
   template<typename T>
   T Read(std::string key);
 
-  json ReadJson();
+  json GetJson() { return data; }
 
 private:
   std::string path = "";
-  std::ifstream file;
+  json data;
 };    
