@@ -45,6 +45,8 @@ While In Chat Mode everything you type will be processed as a chat message and s
 	 - Removes the specified `<ip>` from the ban list.
  - `mute <username> <seconds (optional)>`
 	 - Mutes the user with the specified username for the specified amount of seconds. If no time value is passed the user is muted indefinitely.
+ - `unmute <username>`
+	 - Unmutes the user with the specified username.
 
 ### General commands:
 
@@ -66,10 +68,6 @@ There are also keyboard shortcuts for other functions, for example:
  - NCurses (https://invisible-island.net/ncurses/)
  - ENet Reliable UDP networking library (http://enet.bespin.org/)
  - Niels Lohmann's JSON for Modern C++ (https://json.nlohmann.me/)
-
-## TODO
-
- - More server commands (unmute)
 
 ## Disclaimer
 

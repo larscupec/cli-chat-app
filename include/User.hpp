@@ -14,6 +14,7 @@ public:
   const Color GetColor() { return color; }
   bool IsMuted() { return lastMuteTime + muteTimeSec > time(nullptr); }
   void Mute(unsigned int seconds) { muteTimeSec = seconds; lastMuteTime = time(nullptr); }
+  void Unmute() { muteTimeSec = 0; }
 
 private:
   std::string username = "";

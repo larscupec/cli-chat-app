@@ -2,10 +2,10 @@
 
 #include "ICommand.hpp"
 
-class MuteCommand : public ICommand
+class UnmuteCommand : public ICommand
 {
 public:
-    MuteCommand() {}
+    UnmuteCommand() {}
 
     virtual void Execute(std::vector<std::string> args) override;
 };

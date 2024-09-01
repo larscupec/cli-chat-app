@@ -10,17 +10,21 @@
 #include "BanCommand.hpp"
 #include "UnbanCommand.hpp"
 #include "MuteCommand.hpp"
+#include "UnmuteCommand.hpp"
 
 ServerCommandMode *ServerCommandMode::instance = nullptr;
 
-ServerCommandMode *ServerCommandMode::GetInstance() {
-  if (!instance) {
+ServerCommandMode *ServerCommandMode::GetInstance()
+{
+  if (!instance)
+  {
     instance = new ServerCommandMode();
   }
   return instance;
 }
 
-bool ServerCommandMode::HandleInput(std::string input) {
+bool ServerCommandMode::HandleInput(std::string input)
+{
   if (!Server::GetInstance()->GetIsRunning())
   {
     Debug::LogError("The server isn't running");
@@ -32,31 +36,43 @@ bool ServerCommandMode::HandleInput(std::string input) {
   tokens.erase(tokens.begin());
   std::vector<std::string> args = tokens;
 
-  if (command == COMMAND_STOP) {
+  if (command == COMMAND_STOP)
+  {
     StopServerCommand stop;
     stop.Execute(args);
   }
-  else if (command == COMMAND_EXIT) {
+  else if (command == COMMAND_EXIT)
+  {
     ExitCommand exit;
     exit.Execute(args);
   }
-  else if (command == COMMAND_KICK) {
+  else if (command == COMMAND_KICK)
+  {
     KickCommand kick;
     kick.Execute(args);
   }
-  else if (command == COMMAND_BAN) {
+  else if (command == COMMAND_BAN)
+  {
     BanCommand ban;
     ban.Execute(args);
   }
-  else if (command == COMMAND_UNBAN) {
+  else if (command == COMMAND_UNBAN)
+  {
     UnbanCommand unban;
     unban.Execute(args);
   }
-  else if (command == COMMAND_MUTE) {
+  else if (command == COMMAND_MUTE)
+  {
     MuteCommand mute;
     mute.Execute(args);
   }
-  else {
+  else if (command == COMMAND_UNMUTE)
+  {
+    UnmuteCommand unmute;
+    unmute.Execute(args);
+  }
+  else
+  {
     return false;
   }
 
