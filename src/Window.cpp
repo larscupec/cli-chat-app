@@ -2,7 +2,7 @@
 #include "StringHelper.hpp"
 #include <cctype>
 #include <cstdlib>
-#include <ncurses/ncurses.h>
+#include <ncurses.h>
 #include <string>
 #include <cmath>
 
@@ -23,7 +23,7 @@ Window::Window(WINDOW *parent, std::string title, int height, int width,
 
   Refresh();
 
-  lines.push_back(new ChTypeString());
+  lines.push_back(new ChtypeString());
   isOpen = true;
 }
 
@@ -31,7 +31,7 @@ Window::~Window()
 {
   delwin(pad);
   delwin(container);
-  for (ChTypeString *line : lines)
+  for (ChtypeString *line : lines)
   {
     delete line;
   }
@@ -59,12 +59,12 @@ void Window::Print(std::string text)
   {
     if (i > 0)
     {
-      lines.push_back(new ChTypeString());
+      lines.push_back(new ChtypeString());
       currentLineIndex++;
     }
 
     std::string line = text.substr(startPos, GetPadWidth());
-    ChTypeString chLine(line);
+    ChtypeString chLine(line);
     chLine.ApplyColor(activeColor);
     lines[currentLineIndex]->Append(chLine);
     startPos += line.size();
@@ -85,7 +85,7 @@ void Window::PrintLine(std::string text)
 {
   Print(text + "\n");
 
-  lines.push_back(new ChTypeString());
+  lines.push_back(new ChtypeString());
   currentLineIndex++;
 }
 
@@ -139,12 +139,12 @@ void Window::DrawBorder() { box(container, 0, 0); }
 
 void Window::Clear()
 {
-  for (ChTypeString *line : lines)
+  for (ChtypeString *line : lines)
   {
     delete line;
   }
   lines.clear();
-  lines.push_back(new ChTypeString());
+  lines.push_back(new ChtypeString());
   firstLineIndex = 0;
   currentLineIndex = 0;
   wclear(pad);
@@ -224,7 +224,7 @@ void Window::DrawPad()
     else
     {
       scrollok(pad, false);
-      ChTypeString *line = lines[i];
+      ChtypeString *line = lines[i];
       for (size_t i = 0; i < line->GetSize(); i++)
       {
         mvwaddch(pad, GetCursorPositionY(), i, line->GetString()[i]);

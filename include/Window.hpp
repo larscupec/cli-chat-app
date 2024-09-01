@@ -1,10 +1,10 @@
 #pragma once
 
-#include <ncurses/ncurses.h>
+#include <ncurses.h>
 #include <string>
 #include <vector>
 #include "Color.hpp"
-#include "ChTypeString.hpp"
+#include "ChtypeString.hpp"
 
 class Window {
 public:
@@ -57,7 +57,7 @@ private:
   bool hasFocus = false;
   bool isOpen = false;
 
-  std::vector<ChTypeString*> lines;
+  std::vector<ChtypeString*> lines;
   int firstLineIndex = 0;
   int currentLineIndex = 0;
 

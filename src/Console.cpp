@@ -7,7 +7,7 @@
 #include "Debug.hpp"
 #include "Window.hpp"
 #include "WindowManager.hpp"
-#include <ncurses/ncurses.h>
+#include <ncurses.h>
 
 Console *Console::instance = nullptr;
 

@@ -4,7 +4,7 @@
 #include "ThreadManager.hpp"
 #include <cctype>
 #include <cstdlib>
-#include <ncurses/ncurses.h>
+#include <ncurses.h>
 #include <stdexcept>
 #include <enet/enet.h>
 #include <clichatappConfig.h>

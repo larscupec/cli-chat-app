@@ -5,7 +5,7 @@
 #include "ExitCommand.hpp"
 #include "LeaveCommand.hpp"
 #include "StringHelper.hpp"
-#include <ncurses/ncurses.h>
+#include <ncurses.h>
 #include <vector>
 #include "OpenWindowCommand.hpp"
 

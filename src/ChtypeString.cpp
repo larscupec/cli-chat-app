@@ -1,7 +1,7 @@
-#include "ChTypeString.hpp"
+#include "ChtypeString.hpp"
 #include <stdexcept>
 
-ChTypeString::ChTypeString(const chtype* string)
+ChtypeString::ChtypeString(const chtype* string)
 {
     size_t size = 0;
 
@@ -11,7 +11,7 @@ ChTypeString::ChTypeString(const chtype* string)
 
         if (size > MAX_CHTYPE_STRING_SIZE)
         {
-            throw std::runtime_error("ChTypeString: string size to big");
+            throw std::runtime_error("ChtypeString: string size to big");
         }
     }
 
@@ -26,13 +26,13 @@ ChTypeString::ChTypeString(const chtype* string)
     this->string[size] = '\0';
 }
 
-ChTypeString::ChTypeString(const std::string& string)
+ChtypeString::ChtypeString(const std::string& string)
 {
     this->string = new chtype[string.size() + 1];
 
     if (!this->string)
     {
-        throw std::runtime_error("ChTypeString: couldn't allocate memory for string of size " + string.size());
+        throw std::runtime_error("ChtypeString: couldn't allocate memory for string of size " + string.size());
     }
 
     for (size_t i = 0; i < string.size(); i++)
@@ -44,19 +44,19 @@ ChTypeString::ChTypeString(const std::string& string)
     this->size = string.size();
 }
 
-ChTypeString::~ChTypeString()
+ChtypeString::~ChtypeString()
 {
     delete[] string;
 }
 
-void ChTypeString::Append(const ChTypeString& string)
+void ChtypeString::Append(const ChtypeString& string)
 {
     size_t newSize = GetSize() + string.GetSize();
     chtype *newString = new chtype[newSize + 1];
 
     if (!newString)
     {
-        throw std::runtime_error("ChTypeString: couldn't allocate memory for string of size " + newSize);
+        throw std::runtime_error("ChtypeString: couldn't allocate memory for string of size " + newSize);
     }
 
     size_t i;
@@ -77,7 +77,7 @@ void ChTypeString::Append(const ChTypeString& string)
     this->size = newSize;
 }
 
-void ChTypeString::ApplyColor(const Color color)
+void ChtypeString::ApplyColor(const Color color)
 {
     for (size_t i = 0; i < size; i++)
     {
@@ -85,16 +85,16 @@ void ChTypeString::ApplyColor(const Color color)
     }
 }
 
-void ChTypeString::operator+=(const ChTypeString& other)
+void ChtypeString::operator+=(const ChtypeString& other)
 {
     Append(other);
 }
 
-chtype& ChTypeString::operator[](size_t index) const
+chtype& ChtypeString::operator[](size_t index) const
 {
     if (index > GetSize() - 1 || index < 0)
     {
-        throw std::out_of_range("ChTypeString: index was out of range [" + std::to_string(index) + "]");
+        throw std::out_of_range("ChtypeString: index was out of range [" + std::to_string(index) + "]");
     }
     return string[index];
 }

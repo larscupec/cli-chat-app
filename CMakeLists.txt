@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.30.1)
+cmake_minimum_required(VERSION 3.22.1)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -6,22 +6,20 @@ project(clichatapp VERSION 1.0)
 
 configure_file(clichatappConfig.h.in clichatappConfig.h)
 
-if (UNIX AND NOT APPLE)
-   find_library(ENET libenet.a REQUIRED)
-endif (UNIX AND NOT APPLE)
-
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR})
-
-if (UNIX AND NOT APPLE)
-   target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-endif (UNIX AND NOT APPLE)
+target_include_directories(${PROJECT_NAME} PUBLIC include ${PROJECT_BINARY_DIR})
 
 if (WIN32)
-   target_include_directories(${PROJECT_NAME} PUBLIC include C:/msys64/ucrt64/include)
+   target_include_directories(${PROJECT_NAME} PUBLIC C:/msys64/ucrt64/include)
    target_link_directories(${PROJECT_NAME} PUBLIC C:/msys64/ucrt64/lib)
 endif (WIN32)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC ncursesw enet -static-libstdc++)
+if (UNIX)
+   find_library(ENET enet PATHS $ENV{HOME}/Libs/enet/.libs NO_DEFAULT_PATH)
+   find_library(NCURSES ncurses PATHS $ENV{HOME}/Libs/ncurses/lib NO_DEFAULT_PATH)
+   target_include_directories(${PROJECT_NAME} PUBLIC $ENV{HOME}/Libs/enet/include $ENV{HOME}/Libs/ncurses/include)
+endif (UNIX)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC ${NCURSES} ${ENET} -static-libstdc++)

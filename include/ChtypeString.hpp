@@ -1,25 +1,25 @@
 #pragma once
 
 #include <string>
-#include <ncurses/ncurses.h>
+#include <ncurses.h>
 #include "Color.hpp"
 
 const size_t MAX_CHTYPE_STRING_SIZE = 2048;
 
-class ChTypeString
+class ChtypeString
 {
 public:
-    ChTypeString(const chtype* string);
-    ChTypeString(const std::string& string = "");
-    ~ChTypeString();
+    ChtypeString(const chtype* string);
+    ChtypeString(const std::string& string = "");
+    ~ChtypeString();
 
-    void Append(const ChTypeString& string);
+    void Append(const ChtypeString& string);
     void ApplyColor(const Color color);
 
     size_t GetSize() const { return size; }
     const chtype *GetString() { return string; }
 
-    void operator+=(const ChTypeString& other);
+    void operator+=(const ChtypeString& other);
     chtype& operator[](size_t index) const;
 
 private:

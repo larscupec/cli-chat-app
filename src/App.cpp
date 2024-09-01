@@ -15,7 +15,7 @@
 #include "Window.hpp"
 #include "WindowManager.hpp"
 #include <filesystem>
-#include <ncursesw/ncurses.h>
+#include <ncurses.h>
 #include <string>
 #include <thread>
 #include "GeneralCommandMode.hpp"
