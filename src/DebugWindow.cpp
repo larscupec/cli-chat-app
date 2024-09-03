@@ -1,10 +1,12 @@
 #include "DebugWindow.hpp"
 #include "Window.hpp"
+#include <iostream>
 
 Window *DebugWindow::window = nullptr;
 
 void DebugWindow::PrintLine(std::string message) {
   if (!window) {
+    std::cout << message << std::endl;
     return;
   }
   window->PrintLine(message);

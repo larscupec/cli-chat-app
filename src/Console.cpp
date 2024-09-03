@@ -32,8 +32,8 @@ void Console::Edit()
   WINDOW *consolePad = consoleWindow->GetPad();
 
   keypad(consolePad, true);
-  noecho();
   scrollok(consolePad, false);
+  noecho();
 
   int lastCharacterPositionX = leftmostCursorPositionX;
   int previousInputIndex = previousInput.size() - 1;
@@ -74,24 +74,24 @@ void Console::Edit()
         lastCharacterPositionX--;
       }
       break;
-    case ('Q' & 0x1F):
-      // Ctrl+Q sets the console mode to Client Command Mode
+    case ('A' & 0x1F):
+      // Ctrl+A sets the console mode to Client Command Mode
       if (!App::GetInstance()->GetIsServer())
       {
-        SetConsoleMode(ClientCommandMode::GetInstance());
+        SetMode(ClientCommandMode::GetInstance());
       }
       break;
-    case ('A' & 0x1F):
-      // Ctrl+A sets the console mode to Chat Mode
+    case ('Y' & 0x1F):
+      // Ctrl+Y sets the console mode to Chat Mode
       if (!Client::GetInstance()->GetIsConnected())
       {
         Debug::Log("You must be connected to a server to enable Chat Mode");
         return;
       }
-      SetConsoleMode(ChatMode::GetInstance());
+      SetMode(ChatMode::GetInstance());
       break;
-    case ('S' & 0x1F):
-      // Ctrl+S focuses next window
+    case ('F' & 0x1F):
+      // Ctrl+F focuses next windowimmediately available to the program
       WindowManager::FocusNextWindow();
       break;
     case ('R' & 0x1F):
@@ -198,14 +198,14 @@ void Console::ProcessInput()
   {
     return;
   }
-  if (!consoleMode->Handle(input))
+  if (!mode->Handle(input))
   {
     Debug::Log("Unknown command '" + input + "'");
   }
 }
 
-void Console::SetConsoleMode(ConsoleMode *consoleMode)
+void Console::SetMode(ConsoleMode *mode)
 {
-  this->consoleMode = consoleMode;
-  Debug::Log("Console Mode set to " + consoleMode->ToString());
+  this->mode = mode;
+  Debug::Log("Console Mode set to " + mode->ToString());
 }

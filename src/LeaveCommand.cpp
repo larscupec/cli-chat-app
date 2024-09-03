@@ -5,5 +5,5 @@
 
 void LeaveCommand::Execute(std::vector<std::string> args) {
   Client::GetInstance()->Disconnect();
-  Console::GetInstance()->SetConsoleMode(ClientCommandMode::GetInstance());
+  Console::GetInstance()->SetMode(ClientCommandMode::GetInstance());
 }

@@ -12,14 +12,14 @@ public:
 
   void ProcessInput();
 
-  void SetConsoleMode(ConsoleMode *consoleMode);
+  void SetMode(ConsoleMode *mode);
 
 private:
   Console() {}
 
   static Console *instance;
   
-  ConsoleMode *consoleMode = nullptr;
+  ConsoleMode *mode = nullptr;
 
   std::string ReadInput();
   void ClearInput();

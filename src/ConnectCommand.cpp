@@ -31,6 +31,6 @@ void ConnectCommand::Execute(std::vector<std::string> args) {
   if (Client::GetInstance()->ConnectTo(ip, port)) {
     std::thread *clientThread = new std::thread(&Client::Listen, Client::GetInstance());
     ThreadManager::Add(clientThread);
-    Console::GetInstance()->SetConsoleMode(ChatMode::GetInstance());
+    Console::GetInstance()->SetMode(ChatMode::GetInstance());
   }
 }

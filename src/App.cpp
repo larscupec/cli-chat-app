@@ -97,7 +97,7 @@ void App::Run(bool isHost, bool isServer)
     Debug::Log("Initializing the client...");
     Client::GetInstance()->SetUsername(username);
 
-    Console::GetInstance()->SetConsoleMode(ClientCommandMode::GetInstance());
+    Console::GetInstance()->SetMode(ClientCommandMode::GetInstance());
     ClientCommandMode::GetInstance()->SetNext(GeneralCommandMode::GetInstance());
 
     Debug::Log("Done!");
@@ -139,7 +139,7 @@ void App::Run(bool isHost, bool isServer)
         new std::thread(&Server::Start, Server::GetInstance(), DEFAULT_SERVER_PORT);
     ThreadManager::Add(serverThread);
 
-    Console::GetInstance()->SetConsoleMode(ServerCommandMode::GetInstance());
+    Console::GetInstance()->SetMode(ServerCommandMode::GetInstance());
     ServerCommandMode::GetInstance()->SetNext(GeneralCommandMode::GetInstance());
   }
 

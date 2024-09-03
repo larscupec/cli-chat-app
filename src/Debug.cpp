@@ -2,7 +2,6 @@
 #include "Color.hpp"
 #include "DebugWindow.hpp"
 #include <ctime>
-#include <iostream>
 #include <string>
 
 std::vector<std::string> Debug::messages;
@@ -23,7 +22,6 @@ void Debug::Log(std::string message) {
   message = "[" + GetCurrentDateTime() + "] " + message;
   messages.push_back(message);
   DebugWindow::PrintLine(message);
-  std::cout << message << std::endl;
 }
 
 void Debug::LogError(std::string message) {
