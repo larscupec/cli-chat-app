@@ -7,7 +7,7 @@
 #include <ncurses.h>
 #include <stdexcept>
 #include <enet/enet.h>
-#include <clichatappConfig.h>
+#include <config.hpp>
 #include <iostream>
 
 int main(int argc, char **argv)

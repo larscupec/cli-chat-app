@@ -115,6 +115,11 @@ void Console::Edit()
     case KEY_UP:
       if (WindowManager::GetFocusedWindow()->GetPad() == consolePad)
       {
+        if (previousInput.empty())
+        {
+          break;
+        }
+
         consoleWindow->Clear();
         consoleWindow->Print(previousInput[previousInputIndex]);
         lastCharacterPositionX = previousInput[previousInputIndex].size();

@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(clichatapp VERSION 1.0)
 
-configure_file(clichatappConfig.h.in clichatappConfig.h)
+configure_file(config.hpp.in config.hpp)
 
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
 add_executable(${PROJECT_NAME} ${SRC_FILES})
