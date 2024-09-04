@@ -14,6 +14,18 @@
             }
         },
         {
+            "name": "windows-release",
+            "displayName": "Windows GCC x64 (MinGW Makefiles) Release",
+            "description": "Using GCC x64 compiler with \"MinGW Makefiles\" geneartor on Windows - Release",
+            "generator": "MinGW Makefiles",
+            "binaryDir": "${sourceDir}/build/release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_C_COMPILER": "gcc.exe",
+                "CMAKE_CXX_COMPILER": "g++.exe"
+            }
+        },
+        {
             "name": "linux-debug",
             "displayName": "Linux GCC x64 (Unix Makefiles) Debug",
             "description": "Using GCC x64 compiler with \"Unix Makefiles\" geneartor on Linux - Debug",
@@ -21,6 +33,18 @@
             "binaryDir": "${sourceDir}/build/debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++"
+            }
+        },
+        {
+            "name": "linux-release",
+            "displayName": "Linux GCC x64 (Unix Makefiles) Release",
+            "description": "Using GCC x64 compiler with \"Unix Makefiles\" geneartor on Linux - Release",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_C_COMPILER": "gcc",
                 "CMAKE_CXX_COMPILER": "g++"
             }

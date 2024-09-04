@@ -23,4 +23,4 @@ if (UNIX)
    find_library(NCURSES ncurses PATHS $ENV{HOME}/Libs/ncurses/lib NO_DEFAULT_PATH)
 endif (UNIX)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC ${NCURSES} ${ENET} -static-libstdc++)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${NCURSES} ${ENET} -static-libgcc -static-libstdc++)
