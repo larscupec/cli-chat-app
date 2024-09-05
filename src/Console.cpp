@@ -74,8 +74,8 @@ void Console::Edit()
         lastCharacterPositionX--;
       }
       break;
-    case ('A' & 0x1F):
-      // Ctrl+A sets the console mode to Client Command Mode
+    case ('E' & 0x1F):
+      // Ctrl+E sets the console mode to Command Mode
       if (!App::GetInstance()->GetIsServer())
       {
         SetMode(ClientCommandMode::GetInstance());
@@ -90,8 +90,8 @@ void Console::Edit()
       }
       SetMode(ChatMode::GetInstance());
       break;
-    case ('F' & 0x1F):
-      // Ctrl+F focuses next windowimmediately available to the program
+    case ('D' & 0x1F):
+      // Ctrl+D focuses next window
       WindowManager::FocusNextWindow();
       break;
     case ('R' & 0x1F):

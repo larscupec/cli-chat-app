@@ -22,7 +22,7 @@ And that's it! For now. This is the username with which you will join servers.
 
 ### Console Modes
 
-While using the cli-chat-app you will be interacting with it through a console at the bottom of the screen. The Console is used to execute commands and send chat messages. Currently there are two modes, Command Mode and Chat Mode. You can switch between these two modes with ease by pressing `Ctrl+A`, which activates the Command Mode, or `Ctrl+Y`, which activates the Chat Mode.
+While using the cli-chat-app you will be interacting with it through a console at the bottom of the screen. The Console is used to execute commands and send chat messages. Currently there are two modes, Command Mode and Chat Mode. You can switch between these two modes with ease by pressing `Ctrl+E`, which activates the Command Mode, or `Ctrl+Y`, which activates the Chat Mode.
 
 While In Chat Mode everything you type will be processed as a chat message and sent to the server. When in Command Mode you can execute commands. The **command list** is given below:
 
@@ -59,7 +59,7 @@ While In Chat Mode everything you type will be processed as a chat message and s
 
 There are also keyboard shortcuts for other functions, for example:
 
- - `Ctrl+F` - Switches the focus on windows. The focused window has a highlighted title.
+ - `Ctrl+D` - Switches the focus on windows. The focused window has a highlighted title.
  - `Ctrl+X` - Closes the focused window.
  - `Ctrl+R` - Redraws the focused window.
 
