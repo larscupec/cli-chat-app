@@ -106,10 +106,12 @@ int Window::GetCursorPositionY()
 
 std::string Window::ReadLine()
 {
-  const int BUFFER_SIZE = std::min((long long)GetPadWidth(), PTRDIFF_MAX);
-  char buffer[BUFFER_SIZE];
+  const int BUFFER_SIZE = GetPadWidth();
+  char *buffer = new char[BUFFER_SIZE];
   mvwinnstr(pad, GetCursorPositionY(), 0, buffer, BUFFER_SIZE - 1);
-  return StringHelper::TrimString(buffer);
+  std::string result = StringHelper::TrimString(buffer);
+  delete[] buffer;
+  return result;
 }
 
 void Window::Refresh()
