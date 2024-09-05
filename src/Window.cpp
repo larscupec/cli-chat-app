@@ -5,6 +5,7 @@
 #include <ncurses.h>
 #include <string>
 #include <cmath>
+#include <climits>
 
 Window::Window(WINDOW *parent, std::string title, int height, int width,
                int positionY, int positionX)
@@ -105,7 +106,7 @@ int Window::GetCursorPositionY()
 
 std::string Window::ReadLine()
 {
-  const int BUFFER_SIZE = GetPadWidth();
+  const int BUFFER_SIZE = std::min((long)GetPadWidth(), (long)PTRDIFF_MAX);
   char buffer[BUFFER_SIZE];
   mvwinnstr(pad, GetCursorPositionY(), 0, buffer, BUFFER_SIZE - 1);
   return StringHelper::TrimString(buffer);

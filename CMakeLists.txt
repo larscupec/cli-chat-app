@@ -21,7 +21,7 @@ endif (WIN32)
 
 if (UNIX)
    target_include_directories(${PROJECT_NAME} PUBLIC $ENV{HOME}/Libs/enet/include $ENV{HOME}/Libs/ncurses/include)
-   find_library(ENET enet PATHS $ENV{HOME}/Libs/enet/.libs NO_DEFAULT_PATH)
+   find_library(ENET libenet.a PATHS $ENV{HOME}/Libs/enet/libs NO_DEFAULT_PATH)
    find_library(NCURSES ncurses PATHS $ENV{HOME}/Libs/ncurses/lib NO_DEFAULT_PATH)
 endif (UNIX)
 
